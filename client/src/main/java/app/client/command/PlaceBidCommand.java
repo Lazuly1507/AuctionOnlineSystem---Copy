@@ -2,12 +2,12 @@ package app.client.command;
 
 import app.client.store.AuctionStore;
 import app.common.dto.PlaceBidResponse;
-import app.common.protocol.ServerPacket;
+import app.common.protocol.PacketRes;
 
 /** PlaceBidCommand. */
 public class PlaceBidCommand extends Command {
   @Override
-  public void execute(ServerPacket packet) {
+  public void execute(PacketRes packet) {
     if (packet.isSuccess()) {
       PlaceBidResponse response = packet.getData(PlaceBidResponse.class);
       if (response != null) {

@@ -2,12 +2,12 @@ package app.client.command;
 
 import app.client.store.AuctionStore;
 import app.common.dto.AuctionResultResponse;
-import app.common.protocol.ServerPacket;
+import app.common.protocol.PacketRes;
 
 /** FetchAuctionResultCommand. */
 public class FetchAuctionResultCommand extends Command {
   @Override
-  public void execute(ServerPacket packet) {
+  public void execute(PacketRes packet) {
     String message = packet.getMessage();
     if (packet.isSuccess()) {
       AuctionResultResponse response = packet.getData(AuctionResultResponse.class);

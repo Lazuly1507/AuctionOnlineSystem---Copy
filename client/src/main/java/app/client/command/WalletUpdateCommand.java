@@ -3,12 +3,12 @@ package app.client.command;
 import app.client.manager.UserManager;
 import app.common.dto.WalletUpdateResponse;
 import app.common.mapper.DtoMapper;
-import app.common.protocol.ServerPacket;
+import app.common.protocol.PacketRes;
 
 /** WalletUpdateCommand. */
 public class WalletUpdateCommand extends Command {
   @Override
-  public void execute(ServerPacket packet) {
+  public void execute(PacketRes packet) {
     if (packet.isSuccess()) {
       WalletUpdateResponse response = packet.getData(WalletUpdateResponse.class);
       if (response != null && response.user() != null) {

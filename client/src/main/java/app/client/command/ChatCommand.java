@@ -1,12 +1,12 @@
 package app.client.command;
 
 import app.common.dto.ChatResponse;
-import app.common.protocol.ServerPacket;
+import app.common.protocol.PacketRes;
 
 /** ChatCommand. */
 public class ChatCommand extends Command {
   @Override
-  public void execute(ServerPacket packet) {
+  public void execute(PacketRes packet) {
     if (packet == null) {
       return;
     }
