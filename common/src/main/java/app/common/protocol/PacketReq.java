@@ -17,14 +17,6 @@ public class PacketReq {
     this.data = data;
   }
 
-  public PacketType getType() {
-    return type;
-  }
-
-  public String getRawData() {
-    return data;
-  }
-
   /** getData. */
   public <T extends Request> T getData(Class<T> clazz) {
     if (clazz == null || data == null) {
@@ -38,8 +30,7 @@ public class PacketReq {
     return new PacketReq(type, payload == null ? null : GSON.toJson(payload));
   }
 
-  /** of. */
-  public static PacketReq of(PacketType type) {
-    return new PacketReq(type, null);
+  public PacketType getType() {
+    return type;
   }
 }

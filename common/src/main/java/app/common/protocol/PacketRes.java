@@ -57,10 +57,6 @@ public class PacketRes {
     return message;
   }
 
-  public String getRawData() {
-    return data;
-  }
-
   @Override
   public String toString() {
     return GSON.toJson(this);
