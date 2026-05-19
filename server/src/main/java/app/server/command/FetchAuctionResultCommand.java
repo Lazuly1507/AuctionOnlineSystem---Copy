@@ -70,10 +70,7 @@ public class FetchAuctionResultCommand extends Command {
       User user = userService.getById(userId);
       Server.sendPacketToUser(
           userId,
-          PacketRes.of(
-              PacketType.WALLET_UPDATED,
-              "OK",
-              new WalletUpdateResponse(DtoMapper.toUserData(user))));
+          PacketRes.of(PacketType.WALLET_UPDATED, "OK", new WalletUpdateResponse(DtoMapper.toUserData(user))));
     }
   }
 }

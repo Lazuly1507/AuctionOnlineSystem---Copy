@@ -48,7 +48,8 @@ public class LoginCommand extends Command {
       Server.registerClient(user.getId(), clientHandler);
       logger.info("[SERVER] User {} logged in", username);
       LoginResponse response = new LoginResponse(DtoMapper.toUserData(user));
-      clientHandler.sendPacket(PacketRes.of(PacketType.LOGIN, "Đăng nhập thành công!", response));
+      clientHandler.sendPacket(
+          PacketRes.of(PacketType.LOGIN, "Đăng nhập thành công!", response));
     } catch (ServiceException e) {
       logger.warn("[SERVER] Login failed: {}", e.getMessage());
       sendError(clientHandler, "Sai tên tài khoản hoặc mật khẩu.");
