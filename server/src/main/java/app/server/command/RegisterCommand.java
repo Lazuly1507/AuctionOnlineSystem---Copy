@@ -56,8 +56,7 @@ public class RegisterCommand extends Command {
       User created = userService.register(newUser);
       logger.info("[SERVER] User {} registered successfully.", username);
       RegisterResponse response = new RegisterResponse(DtoMapper.toUserData(created));
-      clientHandler.sendPacket(
-          PacketRes.of(true, PacketType.REGISTER, "Đăng ký thành công!", response));
+      clientHandler.sendPacket(PacketRes.of(PacketType.REGISTER, "Đăng ký thành công!", response));
     } catch (ServiceException e) {
       logger.warn("[SERVER] Register failed for user {}", username);
       sendError(clientHandler, "Tài khoản đã tồn tại hoặc dữ liệu không hợp lệ.");

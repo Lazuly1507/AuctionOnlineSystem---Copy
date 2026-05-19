@@ -39,7 +39,7 @@ public class FetchSellerItemsCommand extends Command {
               .map(DtoMapper::toItemData)
               .toList();
       clientHandler.sendPacket(
-          PacketRes.of(PacketType.FETCH_SELLER_ITEMS, new ItemListResponse(items)));
+          PacketRes.of(PacketType.FETCH_SELLER_ITEMS, "OK", new ItemListResponse(items)));
     } catch (ServiceException e) {
       logger.warn("Fetch seller items failed: {}", e.getMessage());
       sendError(clientHandler, e.getMessage());

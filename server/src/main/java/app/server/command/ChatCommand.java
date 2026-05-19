@@ -43,7 +43,7 @@ public class ChatCommand extends Command {
       // KHÔNG trust sender từ client
       ChatResponse response =
           new ChatResponse(user.getId(), user.getName(), content, LocalDateTime.now());
-      PacketRes chatPacket = PacketRes.of(PacketType.CHAT_MESSAGE, response);
+      PacketRes chatPacket = PacketRes.of(PacketType.CHAT_MESSAGE, "OK", response);
       clientHandler.sendPacket(chatPacket);
       Server.broadcast(chatPacket, user.getId());
       logger.info("User {} sent chat message", user.getId());

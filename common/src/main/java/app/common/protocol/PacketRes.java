@@ -21,34 +21,8 @@ public class PacketRes {
     this.data = data;
   }
 
-  /** of. */
-  public static PacketRes of(PacketType type, Response payload) {
-    return new PacketRes(true, type, "OK", toJson(payload));
-  }
-
-  /** of. */
   public static PacketRes of(PacketType type, String message, Response payload) {
     return new PacketRes(true, type, message, toJson(payload));
-  }
-
-  /** of. */
-  public static PacketRes of(boolean success, PacketType type, Response payload) {
-    return new PacketRes(success, type, success ? "OK" : "FAILED", toJson(payload));
-  }
-
-  /** of. */
-  public static PacketRes of(boolean success, PacketType type, String message, Response payload) {
-    return new PacketRes(success, type, message, toJson(payload));
-  }
-
-  /** success. */
-  public static PacketRes success(PacketType type, String message) {
-    return new PacketRes(true, type, message, null);
-  }
-
-  /** error. */
-  public static PacketRes error(String message) {
-    return new PacketRes(false, PacketType.ERROR, message, null);
   }
 
   /** error. */
@@ -64,15 +38,13 @@ public class PacketRes {
   }
 
   /** getData. */
-  @Override
   public <T extends Response> T getData(Class<T> clazz) {
-    if (clazz == null || data == null || data.isBlank()) {
+    if (clazz == null || data == null) {
       return null;
     }
     return GSON.fromJson(data, clazz);
   }
 
-  @Override
   public boolean isSuccess() {
     return success;
   }
@@ -81,12 +53,10 @@ public class PacketRes {
     return type;
   }
 
-  @Override
   public String getMessage() {
     return message;
   }
 
-  @Override
   public String getRawData() {
     return data;
   }

@@ -37,7 +37,6 @@ public class DeleteItemCommand extends Command {
           itemService.softDeleteManagedItem(request.itemId(), user.getId(), user.getRole());
       clientHandler.sendPacket(
           PacketRes.of(
-              true,
               PacketType.DELETE_ITEM,
               "Xóa sản phẩm thành công.",
               new ItemResponse(DtoMapper.toItemData(deleted))));

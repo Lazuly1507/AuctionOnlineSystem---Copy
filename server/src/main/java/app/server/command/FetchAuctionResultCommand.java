@@ -47,7 +47,7 @@ public class FetchAuctionResultCommand extends Command {
       AuctionCompletion completion = auctionService.completeAuction(auctionId);
       Optional<Bid> highestBid = completion.highestBid();
       AuctionResultResponse response = DtoMapper.toAuctionResultResponse(auctionId, highestBid);
-      clientHandler.sendPacket(PacketRes.of(PacketType.FETCH_AUCTION_RESULT, response));
+      clientHandler.sendPacket(PacketRes.of(PacketType.FETCH_AUCTION_RESULT, "OK", response));
       sendWalletUpdates(completion);
     } catch (ServiceException e) {
       logger.warn("Fetch auction result failed: {}", e.getMessage());
@@ -71,7 +71,9 @@ public class FetchAuctionResultCommand extends Command {
       Server.sendPacketToUser(
           userId,
           PacketRes.of(
-              PacketType.WALLET_UPDATED, new WalletUpdateResponse(DtoMapper.toUserData(user))));
+              PacketType.WALLET_UPDATED,
+              "OK",
+              new WalletUpdateResponse(DtoMapper.toUserData(user))));
     }
   }
 }

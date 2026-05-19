@@ -107,7 +107,7 @@ public class Server {
               auctionService.getAuctions().stream()
                   .map(snapshot -> DtoMapper.toAuctionSummary(snapshot.auction(), snapshot.item()))
                   .toList());
-      broadcast(PacketRes.of(PacketType.AUCTION_SUMMARIES_UPDATED, response), -1);
+      broadcast(PacketRes.of(PacketType.AUCTION_SUMMARIES_UPDATED, "OK", response), -1);
     } catch (Exception e) {
       logger.error("[SERVER] Failed to broadcast auction list", e);
     }
@@ -129,7 +129,9 @@ public class Server {
       sendPacketToUser(
           userId,
           PacketRes.of(
-              PacketType.WALLET_UPDATED, new WalletUpdateResponse(DtoMapper.toUserData(user))));
+              PacketType.WALLET_UPDATED,
+              "OK",
+              new WalletUpdateResponse(DtoMapper.toUserData(user))));
     } catch (Exception e) {
       logger.warn("[SERVER] Failed to send wallet update to user {}", userId, e);
     }

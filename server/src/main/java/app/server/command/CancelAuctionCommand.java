@@ -36,7 +36,6 @@ public class CancelAuctionCommand extends Command {
           auctionId, clientHandler.getUser().getId(), request.expectedVersion());
       clientHandler.sendPacket(
           PacketRes.of(
-              true,
               PacketType.CANCEL_AUCTION,
               "Hủy phiên thành công.",
               new CancelAuctionResponse(auctionId)));
@@ -56,8 +55,6 @@ public class CancelAuctionCommand extends Command {
   }
 
   private void sendError(ClientHandler clientHandler, int auctionId, String message) {
-    clientHandler.sendPacket(
-        PacketRes.of(
-            false, PacketType.CANCEL_AUCTION, message, new CancelAuctionResponse(auctionId)));
+    clientHandler.sendPacket(PacketRes.error(PacketType.CANCEL_AUCTION, message));
   }
 }
