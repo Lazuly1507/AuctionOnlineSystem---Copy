@@ -112,10 +112,12 @@ public class MySqlItemDAO extends BaseDAO implements ItemDAO {
       }
       try (ResultSet rs = ps.getGeneratedKeys()) {
         if (rs.next()) {
-          item.setId(rs.getInt(1));
+          int generatedId = rs.getInt(1);
+          return findById(conn, generatedId)
+              .orElseThrow(() -> new DatabaseException("Không thể tải item vừa tạo."));
         }
       }
-      return item;
+      throw new DatabaseException("Không lấy được id của item vừa tạo.");
     } catch (SQLException e) {
       throw new DatabaseException("Lỗi khi thêm item.", e);
     }
