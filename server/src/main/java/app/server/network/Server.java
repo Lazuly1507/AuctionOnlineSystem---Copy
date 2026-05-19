@@ -128,7 +128,10 @@ public class Server {
       var user = userService.getById(userId);
       sendPacketToUser(
           userId,
-          PacketRes.of(PacketType.WALLET_UPDATED, "OK", new WalletUpdateResponse(DtoMapper.toUserData(user))));
+          PacketRes.of(
+              PacketType.WALLET_UPDATED,
+              "OK",
+              new WalletUpdateResponse(DtoMapper.toUserData(user))));
     } catch (Exception e) {
       logger.warn("[SERVER] Failed to send wallet update to user {}", userId, e);
     }

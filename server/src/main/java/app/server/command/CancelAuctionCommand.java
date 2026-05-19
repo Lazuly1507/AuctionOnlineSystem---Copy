@@ -35,7 +35,10 @@ public class CancelAuctionCommand extends Command {
       auctionService.cancelAuction(
           auctionId, clientHandler.getUser().getId(), request.expectedVersion());
       clientHandler.sendPacket(
-          PacketRes.of(PacketType.CANCEL_AUCTION, "Hủy phiên thành công.", new CancelAuctionResponse(auctionId)));
+          PacketRes.of(
+              PacketType.CANCEL_AUCTION,
+              "Hủy phiên thành công.",
+              new CancelAuctionResponse(auctionId)));
       Server.broadcast(
           PacketRes.of(
               PacketType.AUCTION_CANCELLED,
