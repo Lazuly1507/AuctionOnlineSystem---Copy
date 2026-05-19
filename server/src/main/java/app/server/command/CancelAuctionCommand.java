@@ -52,8 +52,6 @@ public class CancelAuctionCommand extends Command {
   }
 
   private void sendError(ClientHandler clientHandler, int auctionId, String message) {
-    clientHandler.sendPacket(
-        PacketRes.of(
-            false, PacketType.CANCEL_AUCTION, message, new CancelAuctionResponse(auctionId)));
+    clientHandler.sendPacket(PacketRes.error(PacketType.CANCEL_AUCTION, message));
   }
 }
