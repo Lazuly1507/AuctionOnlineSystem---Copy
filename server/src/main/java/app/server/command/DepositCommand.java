@@ -39,7 +39,7 @@ public class DepositCommand extends Command {
       BigDecimal amount = request.amount();
       User user = userService.deposit(clientHandler.getUser().getId(), amount);
       WalletUpdateResponse response = new WalletUpdateResponse(DtoMapper.toUserData(user));
-      clientHandler.sendPacket(PacketRes.of(true, PacketType.DEPOSIT, "OK", response));
+      clientHandler.sendPacket(PacketRes.of(PacketType.DEPOSIT, "OK", response));
     } catch (ServiceException e) {
       logger.warn("Deposit failed: {}", e.getMessage());
       sendError(clientHandler, e.getMessage());

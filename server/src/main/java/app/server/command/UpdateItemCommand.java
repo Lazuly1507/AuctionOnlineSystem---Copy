@@ -43,11 +43,7 @@ public class UpdateItemCommand extends Command {
               request.type());
       Item updated = itemService.updateManagedItem(item, user.getId(), user.getRole());
       clientHandler.sendPacket(
-          PacketRes.of(
-              true,
-              PacketType.UPDATE_ITEM,
-              "Cập nhật sản phẩm thành công.",
-              new ItemResponse(DtoMapper.toItemData(updated))));
+          PacketRes.of(PacketType.UPDATE_ITEM, "Cập nhật sản phẩm thành công.", new ItemResponse(DtoMapper.toItemData(updated))));
     } catch (ServiceException e) {
       logger.warn("Update item failed: {}", e.getMessage());
       sendError(clientHandler, e.getMessage());

@@ -31,7 +31,7 @@ public class FetchUserListCommand extends Command {
               .map(DtoMapper::toUserData)
               .toList();
       clientHandler.sendPacket(
-          PacketRes.of(PacketType.FETCH_USER_LIST, new UserListResponse(users)));
+          PacketRes.of(PacketType.FETCH_USER_LIST, "OK", new UserListResponse(users)));
     } catch (ServiceException e) {
       logger.warn("Fetch users failed: {}", e.getMessage());
       sendError(clientHandler, e.getMessage());

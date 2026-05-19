@@ -29,7 +29,7 @@ public class FetchAuctionHistoryCommand extends Command {
               auctionService.getHistoryAuctions(userId).stream()
                   .map(snapshot -> DtoMapper.toAuctionSummary(snapshot.auction(), snapshot.item()))
                   .toList());
-      clientHandler.sendPacket(PacketRes.of(PacketType.FETCH_AUCTION_HISTORY, response));
+      clientHandler.sendPacket(PacketRes.of(PacketType.FETCH_AUCTION_HISTORY, "OK", response));
     } catch (Exception e) {
       logger.error("Failed to fetch auction history", e);
       clientHandler.sendPacket(
