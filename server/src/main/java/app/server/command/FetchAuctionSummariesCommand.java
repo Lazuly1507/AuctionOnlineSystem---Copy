@@ -28,7 +28,7 @@ public class FetchAuctionSummariesCommand extends Command {
               auctionService.getAuctions().stream()
                   .map(snapshot -> DtoMapper.toAuctionSummary(snapshot.auction(), snapshot.item()))
                   .toList());
-      clientHandler.sendPacket(PacketRes.of(PacketType.FETCH_AUCTION_SUMMARIES, response));
+      clientHandler.sendPacket(PacketRes.of(PacketType.FETCH_AUCTION_SUMMARIES, "OK", response));
     } catch (Exception e) {
       logger.error("Failed to fetch auctions", e);
       clientHandler.sendPacket(

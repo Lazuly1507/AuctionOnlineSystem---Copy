@@ -40,13 +40,13 @@ public class FetchAuctionDetailCommand extends Command {
       if (auctionService.isAuctionVersionCurrent(request.auctionId(), request.knownVersion())) {
         AuctionDetailResponse response =
             AuctionDetailResponse.notModified(request.auctionId(), request.knownVersion());
-        clientHandler.sendPacket(PacketRes.of(PacketType.FETCH_AUCTION_DETAIL, response));
+        clientHandler.sendPacket(PacketRes.of(PacketType.FETCH_AUCTION_DETAIL, "OK", response));
         return;
       }
       AuctionSnapshot auction = auctionService.getAuction(request.auctionId());
       AuctionDetailResponse response =
           new AuctionDetailResponse(DtoMapper.toAuctionDetail(auction.auction(), auction.item()));
-      clientHandler.sendPacket(PacketRes.of(PacketType.FETCH_AUCTION_DETAIL, response));
+      clientHandler.sendPacket(PacketRes.of(PacketType.FETCH_AUCTION_DETAIL, "OK", response));
     } catch (ServiceException e) {
       logger.warn("Fetch auction detail failed: {}", e.getMessage());
       clientHandler.sendPacket(PacketRes.error(PacketType.FETCH_AUCTION_DETAIL, e.getMessage()));
