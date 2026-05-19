@@ -156,6 +156,8 @@ public final class AuctionStore {
 
   private Auction mergeAuction(Auction existing, Auction incoming) {
     boolean incomingHasDetail = incoming.getItemId() > 0 || incoming.getSellerId() > 0;
+    boolean incomingHasFullState =
+        incomingHasDetail || incoming.getCreatedAt() != null || incoming.getUpdatedAt() != null;
     Auction merged =
         new Auction(
             existing.getId(),
@@ -165,7 +167,7 @@ public final class AuctionStore {
             incoming.getStatus() != null ? incoming.getStatus() : existing.getStatus(),
             incoming.getStartTime() != null ? incoming.getStartTime() : existing.getStartTime(),
             incoming.getEndTime() != null ? incoming.getEndTime() : existing.getEndTime(),
-            incoming.getHighestBid() > 0 ? incoming.getHighestBid() : existing.getHighestBid(),
+            incomingHasFullState ? incoming.getHighestBid() : existing.getHighestBid(),
             incomingHasDetail ? incoming.getExtendedCount() : existing.getExtendedCount(),
             Math.max(existing.getVersion(), incoming.getVersion()),
             incoming.getCreatedAt() != null ? incoming.getCreatedAt() : existing.getCreatedAt(),

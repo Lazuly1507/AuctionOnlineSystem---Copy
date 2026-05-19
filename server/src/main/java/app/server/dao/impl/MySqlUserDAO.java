@@ -109,10 +109,12 @@ public class MySqlUserDAO extends BaseDAO implements UserDAO {
       }
       try (ResultSet rs = ps.getGeneratedKeys()) {
         if (rs.next()) {
-          user.setId(rs.getInt(1));
+          int generatedId = rs.getInt(1);
+          return findById(conn, generatedId)
+              .orElseThrow(() -> new DatabaseException("Không thể tải user vừa tạo."));
         }
-        return user;
       }
+      throw new DatabaseException("Không lấy được id của user vừa tạo.");
     } catch (SQLException e) {
       throw new DatabaseException("Lỗi khi thêm user.", e);
     }

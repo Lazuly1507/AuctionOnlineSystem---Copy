@@ -145,10 +145,12 @@ public class MySqlAuctionDAO extends BaseDAO implements AuctionDAO {
       }
       try (ResultSet rs = ps.getGeneratedKeys()) {
         if (rs.next()) {
-          auction.setId(rs.getInt(1));
+          int generatedId = rs.getInt(1);
+          return findById(conn, generatedId)
+              .orElseThrow(() -> new DatabaseException("Không thể tải auction vừa tạo."));
         }
       }
-      return auction;
+      throw new DatabaseException("Không lấy được id của auction vừa tạo.");
     } catch (SQLException e) {
       throw new DatabaseException("Lỗi khi tạo auction.", e);
     }
