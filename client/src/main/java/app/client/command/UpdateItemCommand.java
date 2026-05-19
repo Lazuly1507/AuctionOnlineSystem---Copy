@@ -3,12 +3,12 @@ package app.client.command;
 import app.client.store.ItemStore;
 import app.common.dto.ItemResponse;
 import app.common.mapper.DtoMapper;
-import app.common.protocol.ServerPacket;
+import app.common.protocol.PacketRes;
 
 /** UpdateItemCommand. */
 public class UpdateItemCommand extends Command {
   @Override
-  public void execute(ServerPacket packet) {
+  public void execute(PacketRes packet) {
     if (packet.isSuccess()) {
       ItemResponse response = packet.getData(ItemResponse.class);
       if (response != null && response.item() != null) {

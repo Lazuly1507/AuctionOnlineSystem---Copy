@@ -1,12 +1,12 @@
 package app.client.command;
 
 import app.client.manager.ClientNotificationCenter;
-import app.common.protocol.ServerPacket;
+import app.common.protocol.PacketRes;
 
 /** Command. */
 public abstract class Command {
   /** execute. */
-  public abstract void execute(ServerPacket packet);
+  public abstract void execute(PacketRes packet);
 
   public void notifyMessage(String msg) {
     if (msg == null || msg.isBlank()) {
