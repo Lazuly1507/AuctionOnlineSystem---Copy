@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+  <BorderPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #0a0b10;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.client.controllers.AuctionController">
+  <!-- Header -->
+  <top>
+   <VBox style="-fx-background-color:#161b26;">
+  <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="20.0" style="-fx-border-color: #eaeaea; -fx-border-width: 0 0 1 0;">
+  <padding>
+    <Insets left="40.0" right="40.0" />
+  </padding>
+  <Button mnemonicParsing="false" onAction="#handleBack" style="-fx-background-color: transparent; -fx-text-fill: #673ab7; -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;" text="&lt; TRỞ VỀ TRANG CHỦ" />
+  <Region HBox.hgrow="ALWAYS" />
+  <Label text="TẠO PHIÊN ĐẤU GIÁ MỚI" textFill="WHITE" style="-fx-font-weight: bold; -fx-font-size: 24px;" />
+  </HBox>
+   </VBox>
+  </top>
+  <!-- Center Content -->
+  <center>
+   <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-border-color: transparent;">
+  <padding>
+  <Insets top="30.0" right="40.0" bottom="30.0" left="40.0" />
+  </padding>
+  <VBox alignment="CENTER">
+  <VBox spacing="20.0" maxWidth="800.0" style="-fx-background-color:#161b26; -fx-background-radius: 10; -fx-padding: 40; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 4);">
+    <Label text="THÔNG TIN TÀI SẢN ĐẤU GIÁ" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #333333;" />
+    <Separator />
+    <GridPane vgap="20.0" hgap="20.0">
+  <columnConstraints>
+   <ColumnConstraints minWidth="200.0" />
+   <ColumnConstraints hgrow="ALWAYS" />
+  </columnConstraints>
+  <Label text="Tên tài sản *" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+  <TextField fx:id="nameField" promptText="Nhập tên tài sản..." style="-fx-padding: 10; -fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+  <Label text="Mô tả chi tiết" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.valignment="TOP" />
+  <TextArea fx:id="descriptionField" promptText="Nhập mô tả tình trạng, thông tin..." prefRowCount="4" style="-fx-border-radius: 5; -fx-wrap-text: true;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+  <Label text="Phân loại *" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+  <ComboBox fx:id="typeComboBox" prefWidth="300.0"
+  style="-fx-background-color: #0a0b10; -fx-border-color: #1a2236; -fx-border-radius: 5; -fx-background-radius: 5; -fx-text-fill: white;"
+  GridPane.columnIndex="1" GridPane.rowIndex="2" />
+  <Label text="Giá khởi điểm (VNĐ) *" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+  <TextField fx:id="startingPriceField" promptText="VD: 5000000" style="-fx-padding: 10; -fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+  <Label text="Bước giá tối thiểu (VNĐ) *" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+  <TextField fx:id="stepPriceField" promptText="VD: 100000" style="-fx-padding: 10; -fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+  <Label text="Thời gian diễn ra (Phút) *" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+  <TextField fx:id="durationField" promptText="VD: 60" style="-fx-padding: 10; -fx-background-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+    </GridPane>
+    <HBox alignment="CENTER_RIGHT" spacing="15.0" style="-fx-padding: 20 0 0 0;">
+  <Button mnemonicParsing="false" onAction="#handleBack" text="Hủy bỏ" style="-fx-background-color: transparent; -fx-text-fill: #666; -fx-font-weight: bold; -fx-cursor: hand;" />
+  <Button mnemonicParsing="false" onAction="#handleAdd" text="BẮT ĐẦU PHIÊN ĐẤU GIÁ" style="-fx-background-color: #673ab7; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-padding: 10 30; -fx-background-radius: 5; -fx-cursor: hand;" />
+    </HBox>
+  </VBox>
+  </VBox>
+   </ScrollPane>
+  </center>
+</BorderPane>

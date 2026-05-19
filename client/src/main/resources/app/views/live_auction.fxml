@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #0f1424;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.client.controllers.LiveController">
+    <!-- Header -->
+    <top>
+        <VBox style="-fx-background-color:#161b26;">
+            <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="20.0" style="-fx-border-color: #2d3748; -fx-border-width: 0 0 1 0;">
+                <padding>
+                    <Insets left="40.0" right="40.0" />
+                </padding>
+                <Button mnemonicParsing="false" onAction="#switchToUi" style="-fx-background-color: transparent; -fx-text-fill: #4f46e5; -fx-font-weight: bold; -fx-font-size: 16px;" text="&lt; TRỞ VỀ TRANG CHỦ" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-font-weight: bold; -fx-font-size: 24px;" text="CHI TIẾT TÀI SẢN ĐẤU GIÁ" textFill="WHITE" />
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-background: transparent;">
+            <content>
+                <VBox spacing="25.0">
+                    <padding>
+                        <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+                    </padding>
+                    <!-- HÀNG CHÍNH: CĂN CHỈNH CHIỀU CAO NGANG NHAU (fillHeight="true") -->
+                    <HBox fillHeight="true" spacing="20.0">
+                        <!-- CỘT 1: ẢNH -->
+                        <VBox prefWidth="380.0" style="-fx-background-color: #161b26; -fx-background-radius: 12; -fx-border-color: #2d3748; -fx-border-radius: 12; -fx-padding: 10;">
+                            <StackPane VBox.vgrow="ALWAYS">
+                                <Label style="-fx-text-fill: #4a5568;" text="[ HÌNH ẢNH TÀI SẢN ]" />
+                                <!-- ImageView của bạn đặt tại đây -->
+                            </StackPane>
+                        </VBox>
+                        <!-- CỘT 2: THÔNG TIN & MÔ TẢ (Ở GIỮA) -->
+                        <VBox spacing="20.0" style="-fx-background-color: #161b26; -fx-background-radius: 12; -fx-border-color: #2d3748; -fx-border-radius: 12; -fx-padding: 20;" HBox.hgrow="ALWAYS">
+                            <VBox spacing="10.0">
+                                <Label fx:id="itemNameLabel" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Tên tài sản..." textFill="WHITE" wrapText="true" />
+                                <GridPane hgap="15.0" vgap="10.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints minWidth="120.0" />
+                                        <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" />
+                                    </columnConstraints>
+                                    <Label text="Giá khởi điểm:" textFill="#94a3b8" GridPane.rowIndex="0" />
+                                    <Label fx:id="startPriceLabel" text="0 đ" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                    <Label text="Bước giá:" textFill="#94a3b8" GridPane.rowIndex="1" />
+                                    <Label fx:id="stepPriceLabel" text="0 đ" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Label text="Tiền đặt trước:" textFill="#94a3b8" GridPane.rowIndex="2" />
+                                    <Label fx:id="depositLabel" text="0 đ" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label text="Tình trạng:" textFill="#94a3b8" GridPane.rowIndex="3" />
+                                    <Label text="Sắp đấu giá" textFill="#22c55e" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <rowConstraints>
+                                        <RowConstraints />
+                                        <RowConstraints />
+                                        <RowConstraints />
+                                        <RowConstraints />
+                                    </rowConstraints>
+                                </GridPane>
+                            </VBox>
+                            <Separator opacity="0.1" />
+                            <!-- PHẦN MÔ TẢ ĐÃ ĐƯỢC CHUYỂN VÀO ĐÂY -->
+                            <VBox spacing="8.0" VBox.vgrow="ALWAYS">
+                                <Label style="-fx-font-weight: bold;" text="Mô tả sản phẩm:" textFill="#94a3b8" />
+                                <TextArea fx:id="description" editable="false" focusTraversable="false" style="-fx-control-inner-background: #161b26; -fx-text-fill: #cbd5e1; -fx-background-color: transparent; -fx-border-color: #2d3748; -fx-border-radius: 5; -fx-padding: 5;" wrapText="true" VBox.vgrow="ALWAYS" />
+                            </VBox>
+                        </VBox>
+                        <!-- CỘT 3: BẢNG ĐẤU GIÁ -->
+                        <VBox prefWidth="320.0" spacing="25.0" style="-fx-background-color: #161b26; -fx-background-radius: 12; -fx-padding: 25; -fx-border-color: #2d3748; -fx-border-radius: 12;">
+                            <VBox alignment="CENTER" spacing="5.0">
+                                <Label text="Thời gian còn lại" textFill="#94a3b8" />
+                                <Label fx:id="timeLabel" style="-fx-font-size: 28px; -fx-font-weight: bold;" text="00:00:00" textFill="#ef4444" />
+                            </VBox>
+                            <Separator opacity="0.1" />
+                            <VBox alignment="CENTER" spacing="5.0">
+                                <Label text="Giá hiện tại" textFill="#94a3b8" />
+                                <Label fx:id="currentPriceLabel" style="-fx-font-size: 32px; -fx-font-weight: bold;" text="0 đ" textFill="#22c55e" />
+                            </VBox>
+                            <Region VBox.vgrow="ALWAYS" /> <!-- Đẩy phần nhập giá xuống dưới cùng cột -->
+                            <VBox spacing="10.0">
+                                <Label text="Đặt giá của bạn" textFill="#94a3b8" />
+                                <TextField fx:id="bidAmountField" prefHeight="45.0" promptText="Nhập số tiền..." style="-fx-background-color: #0f1424; -fx-text-fill: white; -fx-border-color: #2d3748; -fx-border-radius: 8;" />
+                                <Button maxWidth="1.7976931348623157E308" onAction="#handlePlaceBid" prefHeight="50.0" style="-fx-background-color: #4f46e5; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-font-size: 16;" text="ĐẶT GIÁ NGAY →" />
+                            </VBox>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color:#161b26; -fx-border-color: #2d3748; -fx-border-width: 1 0 0 0;">
+            <padding>
+                <Insets bottom="10.0" left="40.0" right="40.0" top="10.0" />
+            </padding>
+            <Label fx:id="availableBalanceLabel" text="Số dư khả dụng: 0 đ" textFill="#cbd5e1" />
+        </HBox>
+    </bottom>
+</BorderPane>
+

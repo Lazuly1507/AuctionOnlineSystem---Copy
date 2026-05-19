@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #0f1424;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.client.controllers.MessController">
+   <!-- Header: Giống trang đấu giá -->
+   <top>
+      <VBox style="-fx-background-color: #161b26; -fx-border-color: #2d3748; -fx-border-width: 0 0 1 0;">
+         <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="20.0">
+            <padding><Insets left="40.0" right="40.0" /></padding>
+            <Button onAction="#switchToUi" style="-fx-background-color: transparent; -fx-text-fill: #4f46e5; -fx-font-weight: bold; -fx-font-size: 16px;" text="&lt; TRỞ VỀ TRANG CHỦ" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label style="-fx-font-weight: bold; -fx-font-size: 20px;" text="PHÒNG CHAT CHUNG" textFill="WHITE" />
+            <Region HBox.hgrow="ALWAYS" />
+         </HBox>
+      </VBox>
+   </top>
+   <center>
+      <VBox spacing="15.0">
+         <padding><Insets bottom="20.0" left="100.0" right="100.0" top="20.0" /></padding>
+         <!-- Khung hiển thị tin nhắn -->
+         <ScrollPane fx:id="scrollPane" fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent; -fx-border-color: #2d3748; -fx-border-radius: 15; -fx-background-radius: 15;">
+            <content>
+               <VBox fx:id="chatBox" spacing="15.0" style="-fx-background-color: #161b26; -fx-padding: 20;">
+                  <!-- Tin nhắn sẽ được add vào đây -->
+               </VBox>
+            </content>
+         </ScrollPane>
+         <!-- Khung nhập tin nhắn -->
+         <HBox alignment="CENTER" spacing="15.0" style="-fx-background-color: #161b26; -fx-padding: 15; -fx-background-radius: 12; -fx-border-color: #2d3748; -fx-border-radius: 12;">
+            <TextArea fx:id="myTextArea" prefHeight="50.0" promptText="Nhập tin nhắn... (Dùng @ để tag sản phẩm)" style="-fx-control-inner-background: #0f1424; -fx-text-fill: white; -fx-background-color: transparent; -fx-border-color: #2d3748; -fx-border-radius: 8;" wrapText="true" HBox.hgrow="ALWAYS" />
+            <Button onAction="#send" prefHeight="50.0" prefWidth="100.0" style="-fx-background-color: #4f46e5; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" text="GỬI" />
+         </HBox>
+      </VBox>
+   </center>
+</BorderPane>
+

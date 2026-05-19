@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<AnchorPane fx:id="rootPane" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #0a0f16;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.client.controllers.UserProfileController">
+    <children>
+        <!-- X BUTTON - Top Right -->
+        <Button layoutX="100.0" layoutY="30.0" onAction="#handleBack" prefHeight="50.0" prefWidth="230.0" style="-fx-background-color: linear-gradient(to bottom, #3498db, #2980b9); -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 15; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.5), 10, 0, 0, 5);" text="&lt; TRỞ VỀ TRANG CHỦ" textAlignment="CENTER" />
+        <!-- MAIN CONTAINER -->
+        <VBox alignment="TOP_CENTER" layoutX="100.0" layoutY="110.0" prefHeight="500.0" prefWidth="1080.0" spacing="30.0" style="-fx-background-color: rgba(22, 33, 49, 0.9); -fx-background-radius: 30; -fx-padding: 50; -fx-border-color: rgba(230, 194, 122, 0.5); -fx-border-width: 2; -fx-border-radius: 30; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 20, 0, 0, 10);">
+
+            <!-- SECTION 1: AVATAR + NAME + INFO -->
+            <HBox alignment="CENTER_LEFT" spacing="40.0" style="-fx-padding: 20; -fx-background-color: rgba(13, 22, 33, 0.5); -fx-background-radius: 15;">
+                <!-- Avatar Circle with Initials -->
+                <StackPane prefHeight="140.0" prefWidth="140.0">
+                    <Circle fx:id="avatarCircle" fill="#673ab7" radius="70.0" />
+                    <Label fx:id="avatarLabel" style="-fx-font-size: 54px; -fx-font-weight: bold; -fx-text-fill: white;" text="A" />
+                </StackPane>
+
+                <!-- Name + Info -->
+                <VBox spacing="12.0">
+                    <Label fx:id="userNameLabel" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: white;" text="Tên Người Dùng" />
+
+                    <Label fx:id="emailLabel" style="-fx-font-size: 14px; -fx-text-fill: #bdc3c7;" text="📧 example@email.com" />
+
+                    <Label fx:id="idLabel" style="-fx-font-size: 13px; -fx-text-fill: #95a5a6;" text="ID: #12345" />
+                </VBox>
+            </HBox>
+
+            <!-- SEPARATOR -->
+            <HBox prefHeight="1.0" style="-fx-background-color: rgba(230, 194, 122, 0.3);" />
+
+            <!-- SECTION 2: ROLE + WALLET -->
+            <HBox alignment="CENTER_LEFT" spacing="80.0" style="-fx-padding: 20; -fx-background-color: rgba(13, 22, 33, 0.5); -fx-background-radius: 15;">
+                <!-- Role -->
+                <VBox spacing="10.0">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #95a5a6; -fx-font-weight: bold;" text="VAI TRÒ" />
+                    <Label fx:id="roleLabel" style="-fx-font-size: 18px; -fx-text-fill: #3498db; -fx-font-weight: bold;" text="🎯 Người Đấu Giá" />
+                </VBox>
+
+                <!-- Wallet Balance -->
+                <VBox spacing="10.0">
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #95a5a6; -fx-font-weight: bold;" text="SỐ DƯ" />
+                    <Label fx:id="walletLabel" style="-fx-font-size: 18px; -fx-text-fill: #4caf50; -fx-font-weight: bold;" text="💰 5,000,000 đ" />
+                </VBox>
+            </HBox>
+
+            <!-- SPACER -->
+            <HBox prefHeight="60.0" VBox.vgrow="ALWAYS" />
+        </VBox>
+
+        <!-- LOGOUT BUTTON - Bottom Right (Red) -->
+         <Button layoutX="949.0" layoutY="639.0" onAction="#handleLogout" prefHeight="50.0" prefWidth="230.0" style="-fx-background-color: linear-gradient(to bottom, #3498db, #2980b9); -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 15; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.5), 10, 0, 0, 5);" text=" ĐĂNG XUẤT" />    </children>
+</AnchorPane>

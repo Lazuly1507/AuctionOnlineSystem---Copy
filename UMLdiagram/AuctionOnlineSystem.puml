@@ -1,0 +1,1544 @@
+﻿@startuml
+skinparam classAttributeIconSize 0
+hide empty members
+
+package app {
+  class App {
+    ~main(args: String): void
+    -logger: Logger
+  }
+  class DemoRunner {
+    ~main(): void
+  }
+  class Main {
+    +start(stage: Stage): void
+  }
+  class ServerApp {
+    ~main(args: String): void
+    -logger: Logger
+  }
+}
+
+package app.client.controllers {
+  class AuctionController {
+    +handleAdd(event: ActionEvent): void
+    +handleBack(event: ActionEvent): void
+    +initialize(): void
+    -createAuctionHandler: PacketListener
+    -descriptionField: TextArea
+    -durationField: TextField
+    -nameField: TextField
+    -startingPriceField: TextField
+    -stepPriceField: TextField
+    -typeComboBox: ComboBox
+  }
+  interface Cleanable {
+    ~cleanup(): void
+  }
+  class ConnectServerController {
+    +connectServer(event: ActionEvent): void
+    +handleLoginClick(event: ActionEvent): void
+    -connectButton: Button
+    -CONNECTION_TIMEOUT: int
+    -connectWithTimeout(): Client
+    -getDetailedErrorMessage(e: Exception): String
+    -initialize(): void
+    -resetConnectionButton(): void
+    -rootPane: AnchorPane
+    -showAlert(title: String, content: String): void
+    -statusLabel: Label
+  }
+  class DepositController {
+    +cleanup(): void
+    +handleBack(event: ActionEvent): void
+    +handleDeposit(event: ActionEvent): void
+    +initialize(): void
+    -availableBalanceLabel: Label
+    -client: Client
+    -currencyFormat: DecimalFormat
+    -depositAmountField: TextField
+    -formatCurrency(amount: BigDecimal): String
+    -logger: Logger
+    -pendingDepositAmount: BigDecimal
+    -setupWalletListener(): void
+    -totalBalanceLabel: Label
+    -updateBalanceLabels(user: User): void
+    -walletUpdateHandler: PacketListener
+  }
+  class FirstScene {
+    +cleanup(): void
+    +handleAuth(e: ActionEvent): void
+    +handleReload(event: ActionEvent): void
+    +initialize(): void
+    +SwitchToDeposit(e: ActionEvent): void
+    +SwitchToLive(e: ActionEvent): void
+    +SwitchToMess(e: ActionEvent): void
+    +SwitchToMine(e: ActionEvent): void
+    +SwitchToOrganize(e: ActionEvent): void
+    -activeAuctionsPane: StackPane
+    -activeBox: HBox
+    -addAuctionCard(summary: AuctionSummary): void
+    -auctionListView: ListView
+    -balanceLabel: Label
+    -btnAuth: Button
+    -CARD_WIDTH: double
+    -client: Client
+    -completedAuctionsPane: StackPane
+    -completedBox: HBox
+    -createAuctionCard(summary: AuctionSummary): VBox
+    -createAuctionHandler: PacketListener
+    -createScrollBox(container: HBox): ScrollPane
+    -currencyFormat: DecimalFormat
+    -fetchAuctionsHandler: PacketListener
+    -formatCurrency(amount: BigDecimal): String
+    -loadInitialData(): void
+    -logger: Logger
+    -openAuction(auction: Auction): void
+    -rebuildUI(): void
+    -searchField: TextField
+    -setupAuthButton(): void
+    -setupHBox(hbox: HBox): void
+    -setupListeners(): void
+    -setupListView(): void
+    -setupScrollPanes(): void
+    -setupSearch(): void
+    -setupWalletListener(): void
+    -setupWalletSection(): void
+    -SPACING: double
+    -summaries: List
+    -timelines: List
+    -updateBalanceLabel(): void
+    -updateBalanceLabel(user: User): void
+    -updateListView(): void
+    -walletUpdateHandler: PacketListener
+  }
+  class LiveController {
+    +cleanup(): void
+    +handlePlaceBid(event: ActionEvent): void
+    +initialize(): void
+    +onAuctionClosed(itemName: String, winnerName: String, finalPrice: long): void
+    +onNewBidPlaced(itemName: String, newPrice: long, bidderName: String): void
+    +setAuction(auction: Auction): void
+    +SwitchToUI(event: ActionEvent): void
+    -applyDetail(detail: AuctionDetail): void
+    -auction: Auction
+    -auctionClosedShown: boolean
+    -auctionDetail: AuctionDetail
+    -auctionDetailHandler: PacketListener
+    -auctionResultHandler: PacketListener
+    -availableBalanceLabel: Label
+    -bidAmountField: TextField
+    -cleanedUp: boolean
+    -currencyFormat: DecimalFormat
+    -currentPrice: long
+    -currentPriceLabel: Label
+    -depositLabel: Label
+    -description: TextArea
+    -formatCurrency(amount: BigDecimal): String
+    -formatCurrency(amount: long): String
+    -handleAuctionResult(response: AuctionResultResponse): void
+    -handleBidResponse(response: PlaceBidResponse): void
+    -handleDetailResponse(response: AuctionDetailResponse): void
+    -handleWalletUpdate(response: WalletUpdateResponse): void
+    -itemNameLabel: Label
+    -logger: Logger
+    -placeBidHandler: PacketListener
+    -requestAuctionResult(): void
+    -requestWalletSettlement(): void
+    -resultRequested: boolean
+    -scheduler: ScheduledExecutorService
+    -settlementSent: boolean
+    -startCountdownTimer(endTime: LocalDateTime): void
+    -startPriceLabel: Label
+    -stepPriceLabel: Label
+    -timeLabel: Label
+    -updateAvailableBalance(): void
+    -updateAvailableBalance(user: User): void
+    -updateCountdownLabel(now: LocalDateTime, endTime: LocalDateTime): void
+    -walletUpdateHandler: PacketListener
+  }
+  class LoginController {
+    +handleLogin(): void
+    +handleMouseEntered(event: MouseEvent): void
+    +handleMouseExited(event: MouseEvent): void
+    +switchToRegister(event: MouseEvent): void
+    +SwitchToUI(): void
+    -account: TextField
+    -initialize(): void
+    -lblRegister: Label
+    -loginButton: Button
+    -loginHandler: PacketListener
+    -password: PasswordField
+    -rootPane: AnchorPane
+    -showAlert(): void
+  }
+  class MessController {
+    ~isMe(id: int): boolean
+    +addBubble(sender: String, content: String, isMe: boolean): void
+    +initialize(): void
+    +send(): void
+    +SwitchToUI(event: ActionEvent): void
+    -chatBox: VBox
+    -chatHandler: PacketListener
+    -client: Client
+    -getTextFlow(isMe: boolean): TextFlow
+    -myTextArea: TextArea
+    -scrollPane: ScrollPane
+  }
+  class MyHistoryController {
+    +cleanup(): void
+    +handleReload(): void
+    +initialize(): void
+    +SwitchToUI(): void
+    -CARD_HEIGHT: double
+    -CARD_WIDTH: double
+    -client: Client
+    -createAuctionCard(summary: AuctionSummary): VBox
+    -currentUser: User
+    -finishedPane: FlowPane
+    -handleGoToLive(auction: Auction): void
+    -historyHandler: PacketListener
+    -rebuildUI(): void
+    -requestHistory(): void
+    -runningPane: FlowPane
+    -summaries: List
+    -typeFilterComboBox: ComboBox
+  }
+  class RegisterController {
+    +backToLoginMouse(event: MouseEvent): void
+    +handleRegister(event: ActionEvent): void
+    -initialize(): void
+    -lblLogin: Label
+    -rbBidder: RadioButton
+    -rbSeller: RadioButton
+    -registerButton: Button
+    -registerHandler: PacketListener
+    -roleGroup: ToggleGroup
+    -rootPane: AnchorPane
+    -txtAccount: TextField
+    -txtName: TextField
+    -txtPassword: PasswordField
+  }
+  class UserProfileController {
+    +handleBack(event: ActionEvent): void
+    +handleLogout(event: ActionEvent): void
+    +initialize(): void
+    -avatarCircle: Circle
+    -avatarLabel: Label
+    -currencyFormat: DecimalFormat
+    -emailLabel: Label
+    -idLabel: Label
+    -loadUserProfile(): void
+    -roleLabel: Label
+    -rootPane: AnchorPane
+    -userNameLabel: Label
+    -walletLabel: Label
+  }
+}
+
+package app.client.controllers.manager {
+  class NavigationManager {
+    ~NavigationManager(): private
+    +getInstance()
+    +navigateTo(view: View): void
+    +navigateTo(view: View, controllerCallback: Consumer): void
+    +setPrimaryStage(stage: Stage): void
+    -currentController: Object
+    -instance: NavigationManager
+    -primaryStage: Stage
+  }
+}
+
+package app.server.dao {
+  interface AuctionDAO {
+    ~delete(id: int): boolean
+    ~findAll(): List
+    ~findById(conn: Connection, id: int): Optional
+    ~findById(id: int): Optional
+    ~findByItemId(conn: Connection, itemId: int): List
+    ~findBySeller(sellerId: int): List
+    ~findByStatus(status: AuctionStatus): List
+    ~lockRow(conn: Connection, auctionId: int): void
+    ~save(auction: Auction): Auction
+    ~save(conn: Connection, auction: Auction): Auction
+    ~update(auction: Auction): boolean
+    ~update(conn: Connection, auction: Auction): boolean
+    ~updateIfVersionMatches(conn: Connection, auction: Auction, expectedVersion: int): boolean
+  }
+  interface AutoBidDAO {
+    ~delete(id: int): boolean
+    ~findByAuction(auctionId: int): List
+    ~findByAuctionAndUser(auctionId: int, userId: int): Optional
+    ~findByAuctionAndUser(conn: Connection, auctionId: int, userId: int): Optional
+    ~findById(id: int): Optional
+    ~findEnabledByAuction(auctionId: int): List
+    ~findEnabledByAuction(conn: Connection, auctionId: int): List
+    ~save(autoBid: AutoBid): AutoBid
+    ~save(conn: Connection, autoBid: AutoBid): AutoBid
+    ~setEnabled(id: int, enabled: boolean): boolean
+    ~update(autoBid: AutoBid): boolean
+    ~update(conn: Connection, autoBid: AutoBid): boolean
+  }
+  class BaseDAO {
+    #executeUpdate(conn: Connection, sql: String, params: ): boolean
+    #runInTransaction(: Function<Connection, action: T>, errorMessage: String): T
+    #runInTransaction(action: Consumer, errorMessage: String): void
+    #runWithConnection(action: Consumer, errorMessage: String): void
+    #setParameters(ps: PreparedStatement, params: ): void
+    #withConnection(: Function<Connection, action: T>, errorMessage: String): T
+    -validateUpdateSql(sql: String): void
+  }
+  interface BidDAO {
+    ~existsByAuctionAndUser(auctionId: int, userId: int): boolean
+    ~findByAuction(auctionId: int): List
+    ~findByAuction(conn: Connection, auctionId: int): List
+    ~findByAuctionOrderByTime(auctionId: int): List
+    ~findHighestBid(auctionId: int): Optional
+    ~findHighestBid(conn: Connection, auctionId: int): Optional
+    ~insertBid(auctionId: int, userId: int, bidAmount: long, isAutoBid: boolean): void
+    ~insertBid(conn: Connection, auctionId: int, userId: int, bidAmount: long, isAutoBid: boolean): void
+  }
+  interface ChatDAO {
+    ~getConversation(conversationId: int): List
+    ~save(message: ChatResponse): int
+  }
+  interface ItemDAO {
+    ~findAll(): List
+    ~findAvailable(): List
+    ~findByCategory(type: ItemType): List
+    ~findById(conn: Connection, id: int): Optional
+    ~findById(id: int): Optional
+    ~findBySeller(conn: Connection, sellerId: int): List
+    ~findBySeller(sellerId: int): List
+    ~save(conn: Connection, item: Item): Item
+    ~save(item: Item): Item
+    ~update(conn: Connection, item: Item): void
+    ~update(item: Item): void
+  }
+  interface NotificationDAO {
+    ~findByUser(userId: int): List
+    ~save(notification: Notification): int
+  }
+  interface UserDAO {
+    ~deleteAll(): void
+    ~findAll(): List
+    ~findById(conn: Connection, id: int): Optional
+    ~findById(id: int): Optional
+    ~findByUsername(conn: Connection, username: String): Optional
+    ~findByUsername(username: String): Optional
+    ~lockRow(conn: Connection, id: int): void
+    ~save(conn: Connection, user: User): User
+    ~save(user: User): User
+    ~update(conn: Connection, user: User): void
+    ~update(user: User): void
+  }
+}
+
+package app.server.dao.impl {
+  class MySqlAuctionDAO {
+    ~MySqlAuctionDAO(): public
+    +delete(id: int): boolean
+    +findAll(): List
+    +findById(conn: Connection, id: int): Optional
+    +findById(id: int): Optional
+    +findByItemId(conn: Connection, itemId: int): List
+    +findBySeller(sellerId: int): List
+    +findByStatus(status: AuctionStatus): List
+    +lockRow(conn: Connection, auctionId: int): void
+    +save(auction: Auction): Auction
+    +save(conn: Connection, auction: Auction): Auction
+    +update(auction: Auction): boolean
+    +update(conn: Connection, auction: Auction): boolean
+    +updateIfVersionMatches(conn: Connection, auction: Auction, expectedVersion: int): boolean
+    -BASE_SELECT: String
+    -findMany(conn: Connection, sql: String, params: ): List
+    -findOne(conn: Connection, sql: String, params: ): Optional
+    -logger: Logger
+    -mapAuction(rs: ResultSet): Auction
+    -TABLE: String
+    -updateAuctionRow(conn: Connection, auction: Auction, sql: String, whereParams: ): boolean
+  }
+  class MySqlAutoBidDAO {
+    +delete(id: int): boolean
+    +findByAuction(auctionId: int): List
+    +findByAuctionAndUser(auctionId: int, userId: int): Optional
+    +findByAuctionAndUser(conn: Connection, auctionId: int, userId: int): Optional
+    +findById(id: int): Optional
+    +findEnabledByAuction(auctionId: int): List
+    +findEnabledByAuction(conn: Connection, auctionId: int): List
+    +save(autoBid: AutoBid): AutoBid
+    +save(conn: Connection, autoBid: AutoBid): AutoBid
+    +setEnabled(id: int, enabled: boolean): boolean
+    +update(autoBid: AutoBid): boolean
+    +update(conn: Connection, autoBid: AutoBid): boolean
+    -BASE_SELECT: String
+    -findMany(conn: Connection, sql: String, params: ): List
+    -findOne(conn: Connection, sql: String, params: ): Optional
+    -mapAutoBid(rs: ResultSet): AutoBid
+    -TABLE: String
+  }
+  class MySqlBidDAO {
+    ~MySqlBidDAO(): public
+    +existsByAuctionAndUser(auctionId: int, userId: int): boolean
+    +findByAuction(auctionId: int): List
+    +findByAuction(conn: Connection, auctionId: int): List
+    +findByAuctionOrderByTime(auctionId: int): List
+    +findHighestBid(auctionId: int): Optional
+    +findHighestBid(conn: Connection, auctionId: int): Optional
+    +insertBid(auctionId: int, userId: int, bidAmount: long, isAutoBid: boolean): void
+    +insertBid(conn: Connection, auctionId: int, userId: int, bidAmount: long, isAutoBid: boolean): void
+    -BID_SELECT: String
+    -existsByAuctionAndUser(conn: Connection, auctionId: int, userId: int): boolean
+    -mapBid(rs: ResultSet): BidTransaction
+    -queryBids(conn: Connection, sql: String, auctionId: int): List
+  }
+  class MySqlItemDAO {
+    ~MySqlItemDAO(): public
+    +findAll(): List
+    +findAvailable(): List
+    +findByCategory(type: ItemType): List
+    +findById(conn: Connection, id: int): Optional
+    +findById(id: int): Optional
+    +findBySeller(conn: Connection, sellerId: int): List
+    +findBySeller(sellerId: int): List
+    +save(conn: Connection, item: Item): Item
+    +save(item: Item): Item
+    +update(conn: Connection, item: Item): void
+    +update(item: Item): void
+    -BASE_SELECT: String
+    -findList(conn: Connection, sql: String, params: ): List
+    -findOne(conn: Connection, sql: String, params: ): Optional
+    -mapItem(rs: ResultSet): Item
+    -TABLE: String
+  }
+  class MySqlUserDAO {
+    ~MySqlUserDAO(): public
+    +deleteAll(): void
+    +findAll(): List
+    +findById(conn: Connection, id: int): Optional
+    +findById(id: int): Optional
+    +findByUsername(conn: Connection, username: String): Optional
+    +findByUsername(username: String): Optional
+    +lockRow(conn: Connection, id: int): void
+    +save(conn: Connection, user: User): User
+    +save(user: User): User
+    +update(conn: Connection, user: User): void
+    +update(user: User): void
+    -BASE_SELECT: String
+    -findAll(conn: Connection): List
+    -findOne(conn: Connection, sql: String, params: ): Optional
+    -mapUser(rs: ResultSet): User
+    -saveInternal(conn: Connection, user: User): User
+    -TABLE: String
+  }
+}
+
+package app.data {
+  class AuctionDetail <<record>> {
+    +auctionId: int
+    +currentPrice: long
+    +description: String
+    +endTime: LocalDateTime
+    +itemName: String
+    +startingPrice: long
+    +stepPrice: long
+    +version: int
+  }
+  class AuctionDetailRequest <<record>> {
+    +auctionId: int
+  }
+  class AuctionDetailResponse <<record>> {
+    +detail: AuctionDetail
+    +message: String
+    +success: boolean
+  }
+  class AuctionResultRequest <<record>> {
+    +auctionId: int
+  }
+  class AuctionResultResponse <<record>> {
+    +auctionId: long
+    +finalPrice: long
+    +success: boolean
+    +winner: ProfileData
+  }
+  class AuctionsRequest <<record>> {
+  }
+  class AuctionsResponse <<record>> {
+    +auctions: List
+    +message: String
+    +success: boolean
+  }
+  class AuctionSummary <<record>> {
+    +auction: Auction
+    +currentPrice: long
+    +itemName: String
+  }
+  class BidRequest <<record>> {
+    +auctionId: int
+    +bid: BidTransaction
+  }
+  class BidResponse <<record>> {
+    +auctionId: int
+    +bid: BidTransaction
+  }
+  class BidResult <<record>> {
+    +auctionId: int
+    +highestBid: long
+    +winnerId: Integer
+  }
+  class CancelAuctionRequest <<record>> {
+    +auctionId: int
+    +expectedVersion: int
+  }
+  class CancelAuctionResponse <<record>> {
+    +auctionId: int
+    +message: String
+    +success: boolean
+  }
+  class ChatRequest <<record>> {
+    +content: String
+    +sender: UserData
+    +timestamp: LocalDateTime
+  }
+  class ChatResponse <<record>> {
+    +content: String
+    +sender: String
+    +senderId: int
+    +timestamp: LocalDateTime
+  }
+  class CreateAuctionRequest <<record>> {
+    +description: String
+    +durationMinutes: int
+    +name: String
+    +sellerId: int
+    +startingPrice: long
+    +stepPrice: long
+    +type: ItemType
+  }
+  class CreateAuctionResponse <<record>> {
+    +auction: AuctionSummary
+    +message: String
+    +success: boolean
+  }
+  class DeleteItemRequest <<record>> {
+    +itemId: int
+  }
+  class DepositRequest <<record>> {
+    +amount: BigDecimal
+  }
+  class FetchSellerItemsRequest <<record>> {
+    +sellerId: int
+  }
+  class FetchUsersRequest <<record>> {
+  }
+  class HistoryRequest <<record>> {
+    +userId: int
+  }
+  class HistoryResponse <<record>> {
+    +auctions: List
+    +message: String
+    +success: boolean
+  }
+  class ItemData <<record>> {
+    ~ItemData(item: Item): public
+    +description: String
+    +id: int
+    +name: String
+    +sellerId: int
+    +startingPrice: long
+    +status: ItemStatus
+    +stepPrice: long
+    +type: ItemType
+  }
+  class ItemListResponse <<record>> {
+    +items: List
+    +message: String
+    +success: boolean
+  }
+  class ItemResponse <<record>> {
+    +item: ItemData
+    +message: String
+    +success: boolean
+  }
+  class LoginRequest <<record>> {
+    +password: String
+    +username: String
+  }
+  class LoginResponse <<record>> {
+    +message: String
+    +success: boolean
+    +user: UserData
+  }
+  class PlaceBidRequest <<record>> {
+    +auctionId: int
+    +bidAmount: long
+    +bidderId: int
+    +currentPrice: long
+  }
+  class PlaceBidResponse <<record>> {
+    +auctionId: long
+    +bidderId: long
+    +highestBidAmount: long
+    +message: String
+    +success: boolean
+  }
+  class ProfileData <<record>> {
+    +id: int
+    +name: String
+  }
+  class RegisterRequest <<record>> {
+    +account: String
+    +name: String
+    +password: String
+    +role: UserRole
+  }
+  class RegisterResponse <<record>> {
+    +message: String
+    +success: boolean
+    +user: UserData
+  }
+  interface Request {
+  }
+  interface Response {
+  }
+  class SettleWalletRequest <<record>> {
+    +auctionId: int
+  }
+  class UpdateItemRequest <<record>> {
+    +description: String
+    +itemId: int
+    +name: String
+    +startingPrice: long
+    +stepPrice: long
+    +type: ItemType
+  }
+  class UserData <<record>> {
+    ~UserData(user: User): public
+    +availableBalance: BigDecimal
+    +frozenFunds: BigDecimal>
+    +id: int
+    +name: String
+    +role: UserRole
+    +username: String
+  }
+  class UsersResponse <<record>> {
+    +message: String
+    +success: boolean
+    +users: List
+  }
+  class WalletUpdateResponse <<record>> {
+    +message: String
+    +status: OperationStatus
+    +user: UserData
+  }
+}
+
+package app.server.database {
+  class DatabaseConfig {
+    ~DatabaseConfig(url: String, user: String, password: String): private
+    +getPassword(): String
+    +getUrl(): String
+    +getUser(): String
+    +load()
+    -password: String
+    -url: String
+    -user: String
+  }
+  class DatabaseConnection {
+    ~DatabaseConnection(): private
+    +getDataSource(): HikariDataSource
+    +resetDataSource(): void
+    -dataSource: HikariDataSource
+    -init(): void
+  }
+  class DatabaseInitializer {
+    ~main(): void
+    +initialize(): void
+  }
+  class TransactionManager {
+    +runInTransaction(: Function<Connection, work: T>): T
+    +runWithoutResult(work: Consumer): void
+  }
+}
+
+package app.enums {
+  enum AuctionStatus {
+    +CANCELED
+    +ENDING_SOON
+    +FINISHED
+    +getState(): int
+    +OPEN
+    +PAID
+    +RUNNING
+    -state: int
+  }
+  enum BidType {
+    +AUTO
+    +NORMAL
+    +SYSTEM
+  }
+  enum HistoryType {
+    +ADD_ITEM
+    +BID
+  }
+  enum ItemStatus {
+    +AVAILABLE
+    +DELETE
+    +SOLD
+    +UNDER_AUCTION
+  }
+  enum ItemType {
+    +ART
+    +ELECTRONICS
+    +VEHICLE
+  }
+  enum OperationStatus {
+    +ERROR
+    +FAIL
+    +SUCCESS
+  }
+  enum PacketType {
+    +reqClass: Class
+    +resClass: Class
+  }
+  enum UserRole {
+    +ADMIN
+    +BIDDER
+    +SELLER
+  }
+  enum View {
+    +CONNECT
+    +DEPOSIT
+    +getFxmlPath(): String
+    +HISTORY
+    +LIVE
+    +LOGIN
+    +MESSAGE
+    +ORGANIZE
+    +REGISTER
+    +UI
+    +USER_PROFILE
+    -fxmlPath: String
+  }
+}
+
+package app.exception {
+  class AppException <<exception>> {
+    ~AppException(message: String): public
+    ~AppException(message: String, cause: Throwable): public
+    -serialVersionUID: long
+  }
+  class ConnectException <<exception>> {
+    ~ConnectException(message: String): public
+    ~ConnectException(message: String, cause: Throwable): public
+    -serialVersionUID: long
+  }
+  class DatabaseException <<exception>> {
+    ~DatabaseException(message: String): public
+    ~DatabaseException(message: String, cause: Throwable): public
+    -serialVersionUID: long
+  }
+  class ServiceException <<exception>> {
+    ~ServiceException(message: String): public
+    ~ServiceException(message: String, cause: Throwable): public
+    -serialVersionUID: long
+  }
+}
+
+package app.models {
+  class Account {
+    ~Account(username: String, password: String): public
+    +getPassword(): String
+    +getUsername(): String
+    +setPassword(password: String): void
+    +setUsername(username: String): void
+    -password: String
+    -username: String
+  }
+  class Admin {
+    ~Admin(id: int, name: String, account: Account, wallet: Wallet): public
+    ~Admin(name: String, account: Account, wallet: Wallet): public
+    +getRole(): UserRole
+  }
+  class Art {
+    ~Art(id: int, name: String, sellerId: int, description: String, startingPrice: Long, stepPrice: Long): public
+    ~Art(name: String, sellerId: int, description: String, startingPrice: Long, stepPrice: Long): public
+    +printInfo(): void
+  }
+  class Auction {
+    ~Auction(id: int, itemId: int, sellerId: int, winnerId: Integer, status: AuctionStatus, startTime: LocalDateTime, endTime: LocalDateTime, highestBid: long, extendedCount: int, version: int, createdAt: LocalDateTime, updatedAt: LocalDateTime): public
+    ~Auction(itemId: int, sellerId: int, endTime: LocalDateTime, currentPrice: long): public
+    +cancel(): void
+    +extend(extraSeconds: int): void
+    +finish(): void
+    +getCreatedAt(): LocalDateTime
+    +getEndTime(): LocalDateTime
+    +getExtendedCount(): int
+    +getHighestBid(): long
+    +getId(): int
+    +getItemId(): int
+    +getSellerId(): int
+    +getStartTime(): LocalDateTime
+    +getStatus(): AuctionStatus
+    +getUpdatedAt(): LocalDateTime
+    +getVersion(): int
+    +getWinnerId(): Integer
+    +incrementVersion(): void
+    +isExpired(): boolean
+    +isRunning(): boolean
+    +markPaid(): void
+    +setEndTime(endTime: LocalDateTime): void
+    +setExtendedCount(extendedCount: int): void
+    +setHighestBid(highestBid: long): void
+    +setId(id: int): void
+    +setStartTime(startTime: LocalDateTime): void
+    +setStatus(status: AuctionStatus): void
+    +setUpdatedAt(updatedAt: LocalDateTime): void
+    +setVersion(version: int): void
+    +setWinnerId(winnerId: Integer): void
+    +start(): void
+    +toString(): String
+    +updateHighestBid(newBid: long, bidderId: int): void
+    -createdAt: LocalDateTime
+    -endTime: LocalDateTime
+    -extendedCount: int
+    -highestBid: long
+    -id: int
+    -itemId: int
+    -sellerId: int
+    -startTime: LocalDateTime
+    -status: AuctionStatus
+    -updatedAt: LocalDateTime
+    -version: int
+    -winnerId: Integer
+  }
+  class AutoBid {
+    ~AutoBid(): public
+    ~AutoBid(id: int, auctionId: int, userId: int, maxAmount: long, incrementAmount: long, enabled: boolean, createdAt: LocalDateTime, updatedAt: LocalDateTime): public
+    +getAuctionId(): int
+    +getCreatedAt(): LocalDateTime
+    +getId(): int
+    +getIncrementAmount(): long
+    +getMaxAmount(): long
+    +getUpdatedAt(): LocalDateTime
+    +getUserId(): int
+    +isEnabled(): boolean
+    +setAuctionId(auctionId: int): void
+    +setCreatedAt(createdAt: LocalDateTime): void
+    +setEnabled(enabled: boolean): void
+    +setId(id: int): void
+    +setIncrementAmount(incrementAmount: long): void
+    +setMaxAmount(maxAmount: long): void
+    +setUpdatedAt(updatedAt: LocalDateTime): void
+    +setUserId(userId: int): void
+    -auctionId: int
+    -createdAt: LocalDateTime
+    -enabled: boolean
+    -id: int
+    -incrementAmount: long
+    -maxAmount: long
+    -updatedAt: LocalDateTime
+    -userId: int
+  }
+  class Bidder {
+    ~Bidder(id: int, name: String, account: Account, wallet: Wallet): public
+    ~Bidder(name: String, account: Account, wallet: Wallet): public
+    +getRole(): UserRole
+  }
+  class BidPlacedEvent <<record>> {
+    +amount: long
+    +auctionId: int
+    +autoBid: boolean
+    +bidderId: int
+    +bidderName: String
+    +bidTime: LocalDateTime
+  }
+  class BidTransaction {
+    ~BidTransaction(bidderId: int, bidderName: String, amount: long, isAutoBid: boolean): public
+    ~BidTransaction(id: int, bidderId: int, bidderName: String, amount: long, createAt: LocalDateTime, isAutoBid: boolean): public
+    +getAmount(): long
+    +getBidderId(): int
+    +getBidderName(): String
+    +getCreateAt(): LocalDateTime
+    +getId(): int
+    +isAutoBid(): boolean
+    +setAmount(amount: long): void
+    +setAutoBid(autoBid: boolean): void
+    +setBidderId(bidderId: int): void
+    +setId(id: int): void
+    +toString(): String
+    -amount: long
+    -bidderId: int
+    -bidderName: String
+    -createAt: LocalDateTime
+    -id: int
+    -isAutoBid: boolean
+  }
+  class DataStore {
+    ~DataStore(): private
+    ~loadAuctions(): void
+    ~loadWalletUpdates(): void
+    ~logger: Logger
+    +auctions: List
+    +currentAuction: Auction
+    +currentUser: User
+    +getInstance()
+    +updateCurrentUser(data: UserData): void
+    -instance: DataStore
+  }
+  class Electronics {
+    ~Electronics(id: int, name: String, sellerId: int, description: String, startingPrice: Long, stepPrice: Long): public
+    ~Electronics(name: String, sellerId: int, description: String, startingPrice: Long, stepPrice: Long): public
+    +printInfo(): void
+  }
+  class Entity {
+    #createdAt: LocalDateTime
+    #id: int
+    #updatedAt: LocalDateTime
+    ~Entity(): public
+    ~Entity(id: int): public
+    +equals(o: Object): boolean
+    +getCreatedAt(): LocalDateTime
+    +getId(): int
+    +getUpdatedAt(): LocalDateTime
+    +hashCode(): int
+    +setCreatedAt(createdAt: LocalDateTime): void
+    +setId(id: int): void
+    +setUpdatedAt(updatedAt: LocalDateTime): void
+  }
+  class HistoryRecord {
+    ~HistoryRecord(auctionId: int, type: HistoryType, message: String): public
+    +getAuctionId(): int
+    +getMessage(): String
+    +getTime(): LocalDateTime
+    +getType(): HistoryType
+    +setAuctionId(auctionId: int): void
+    +setMessage(message: String): void
+    +setTime(time: LocalDateTime): void
+    +setType(type: HistoryType): void
+    -auctionId: int
+    -message: String
+    -time: LocalDateTime
+    -type: HistoryType
+  }
+  class HistoryStore {
+    +history: List
+  }
+  class Item {
+    #description: String
+    #name: String
+    #sellerId: int
+    #startingPrice: long
+    #status: ItemStatus
+    #stepPrice: long
+    #type: ItemType
+    ~Item(id: int, name: String, sellerId: int, description: String, startingPrice: long, stepPrice: long, type: ItemType): public
+    ~Item(name: String, sellerId: int, description: String, startingPrice: long, stepPrice: long, type: ItemType): public
+    +getDescription(): String
+    +getName(): String
+    +getSellerId(): int
+    +getStartingPrice(): long
+    +getStatus(): ItemStatus
+    +getStepPrice(): long
+    +getType(): ItemType
+    +printInfo(): void
+    +setDescription(description: String): void
+    +setName(name: String): void
+    +setSellerId(sellerId: int): void
+    +setStartingPrice(startingPrice: long): void
+    +setStatus(status: ItemStatus): void
+    +setStepPrice(stepPrice: long): void
+    +setType(type: ItemType): void
+  }
+  class ItemFactory {
+    +createItem(id: int, name: String, sellerId: int, description: String, startingPrice: Long, stepPrice: Long, type: ItemType): Item
+    +createItem(name: String, sellerId: int, description: String, startingPrice: Long, stepPrice: Long, type: ItemType): Item
+  }
+  class Notification {
+  }
+  class PacketReq {
+    ~PacketReq(type: PacketType, data: String): public
+    +getData(): T
+    +getData(clazz: Class): T
+    +getRawData(): String
+    +getType(): PacketType
+    +of(type: PacketType, payload: Object)
+    -data: String
+    -GSON: Gson
+    -type: PacketType
+  }
+  class PacketRes {
+    ~PacketRes(success: boolean, type: PacketType, message: String, data: String): public
+    +error(message: String)
+    +error(type: PacketType, message: String)
+    +getData(): T
+    +getData(clazz: Class): T
+    +getMessage(): String
+    +getRawData(): String
+    +getType(): PacketType
+    +isSuccess(): boolean
+    +of(success: boolean, type: PacketType, message: String, payload: Object)
+    +of(success: boolean, type: PacketType, payload: Object)
+    +of(type: PacketType, payload: Object)
+    +success(type: PacketType, message: String)
+    +toString(): String
+    -data: String
+    -GSON: Gson
+    -message: String
+    -success: boolean
+    -toJson(payload: Object): String
+    -type: PacketType
+  }
+  class Profile {
+    ~Profile(name: String): public
+    +getName(): String
+    +setName(name: String): void
+    -name: String
+  }
+  class Seller {
+    ~Seller(id: int, name: String, account: Account, wallet: Wallet): public
+    ~Seller(name: String, account: Account, wallet: Wallet): public
+    +getRole(): UserRole
+  }
+  class Session {
+    ~Session(): public
+    +authenticate(user: User): void
+    +getCreatedAt(): LocalDateTime
+    +getLastAccessTime(): LocalDateTime
+    +getSessionId(): String
+    +getUser(): User
+    +isAuthenticated(): boolean
+    +logout(): void
+    +touch(): void
+    -authenticated: boolean
+    -createdAt: LocalDateTime
+    -lastAccessTime: LocalDateTime
+    -sessionId: String
+    -user: User
+  }
+  class User {
+    #account: Account
+    #name: String
+    #role: UserRole
+    #wallet: Wallet
+    ~User(id: int, name: String, account: Account, wallet: Wallet): public
+    ~User(name: String, account: Account, wallet: Wallet): public
+    +getAccount(): Account
+    +getName(): String
+    +getRole(): UserRole
+    +getWallet(): Wallet
+    +setName(name: String): void
+  }
+  class UserFactory {
+    +createUser(id: int, name: String, account: Account, wallet: Wallet, role: UserRole): User
+    +createUser(name: String, account: Account, wallet: Wallet, role: UserRole): User
+    +createUser(userData: UserData): User
+  }
+  class Vehicle {
+    ~Vehicle(id: int, name: String, sellerId: int, description: String, startingPrice: Long, stepPrice: Long): public
+    ~Vehicle(name: String, sellerId: int, description: String, startingPrice: Long, stepPrice: Long): public
+    +printInfo(): void
+  }
+  class Wallet {
+    ~Wallet(): public
+    ~Wallet(availableBalance: BigDecimal): public
+    ~Wallet(availableBalance: BigDecimal, : Map<String, frozenFunds: BigDecimal>): public
+    +commitFrozen(auctionId: String): BigDecimal
+    +deposit(amount: BigDecimal): void
+    +getAvailableBalance(): BigDecimal
+    +getFrozenAmount(auctionId: String): BigDecimal
+    +getTotalBalance(): BigDecimal
+    +releaseFrozen(auctionId: String): BigDecimal
+    +serializeFrozenFunds(): String
+    +setFrozenAmount(auctionId: String, newAmount: BigDecimal): BigDecimal
+    +withdraw(amount: BigDecimal): void
+    -availableBalance: BigDecimal
+    -FROZEN_TYPE: Type
+    -GSON: Gson
+    -lock: ReentrantLock
+    -normalize(amount: BigDecimal): BigDecimal
+  }
+}
+
+package app.observer {
+  class CancelAuctionCommand {
+    ~CancelAuctionCommand(auctionService: AuctionService): public
+    +execute(clientHandler: ClientHandler, packet: PacketReq): void
+    -auctionService: AuctionService
+    -logger: Logger
+    -sendError(clientHandler: ClientHandler, auctionId: int, message: String): void
+  }
+  class ChatCommand {
+    +execute(clientHandler: ClientHandler, packet: PacketReq): void
+    -logger: Logger
+    -MAX_MESSAGE_LENGTH: int
+  }
+  class Client {
+    ~Client(): private
+    +clearListeners(): void
+    +closeResources(): void
+    +connect(): void
+    +getCurrentUser(): User
+    +getInstance()
+    +isClosed(): boolean
+    +isConnected(): boolean
+    +notifyListeners(packetType: PacketType, response: T): void
+    +sendRequest(packet: PacketReq): void
+    +setCurrentUser(currentUser: User): void
+    +subscribe(packetType: PacketType, listener: PacketListener): void
+    +unsubscribe(packetType: PacketType, listener: PacketListener): void
+    -closed: boolean
+    -connected: boolean
+    -currentUser: User
+    -handlePacket(json: String): void
+    -HOST: String
+    -instance: Client
+    -listen(): void
+    -listenerThread: Thread
+    -logger: Logger
+    -PORT: int
+    -reader: BufferedReader
+    -socket: Socket
+    -startListener(): void
+    -writeLock: Object
+    -writer: BufferedWriter
+  }
+  class ClientHandler {
+    ~ClientHandler(socket: Socket, auctionService: AuctionService, bidService: BidService, userService: UserService, itemService: ItemService): public
+    +close(): void
+    +getReader(): BufferedReader
+    +getSession(): Session
+    +getSocket(): Socket
+    +getUser(): User
+    +getWriter(): BufferedWriter
+    +isAuthenticated(): boolean
+    +run(): void
+    +sendPacket(packet: PacketRes): void
+    -cleanup(): void
+    -closed: boolean
+    -handlePacket(packet: PacketReq): void
+    -listen(): void
+    -logger: Logger
+    -reader: BufferedReader
+    -requireLogin(): boolean
+    -requiresAuthentication(type: PacketType): boolean
+    -session: Session
+    -socket: Socket
+    -writeLock: Object
+    -writer: BufferedWriter
+  }
+  interface Command {
+    ~execute(clientHandler: ClientHandler, packet: PacketReq): void
+  }
+  class CreateAuctionCommand {
+    ~CreateAuctionCommand(auctionService: AuctionService, itemService: ItemService): public
+    +execute(clientHandler: ClientHandler, packet: PacketReq): void
+    -auctionService: AuctionService
+    -broadcastAuctionList(): void
+    -itemService: ItemService
+    -logger: Logger
+  }
+  class DeleteItemCommand {
+    ~DeleteItemCommand(itemService: ItemService): public
+    +execute(clientHandler: ClientHandler, packet: PacketReq): void
+    -itemService: ItemService
+    -logger: Logger
+    -sendError(clientHandler: ClientHandler, message: String): void
+  }
+  class DepositCommand {
+    ~DepositCommand(userService: UserService): public
+    +execute(clientHandler: ClientHandler, packet: PacketReq): void
+    -logger: Logger
+    -sendError(clientHandler: ClientHandler, message: String): void
+    -userService: UserService
+  }
+  class FetchAuctionDetailCommand {
+    ~FetchAuctionDetailCommand(auctionService: AuctionService): public
+    +execute(clientHandler: ClientHandler, packet: PacketReq): void
+    -auctionService: AuctionService
+    -logger: Logger
+  }
+  class FetchAuctionResultCommand {
+    ~FetchAuctionResultCommand(auctionService: AuctionService): public
+    +execute(clientHandler: ClientHandler, packet: PacketReq): void
+    -auctionService: AuctionService
+    -logger: Logger
+    -sendError(clientHandler: ClientHandler, message: String): void
+  }
+  class FetchAuctionsCommand {
+    ~FetchAuctionsCommand(auctionService: AuctionService): public
+    +execute(clientHandler: ClientHandler, packet: PacketReq): void
+    -auctionService: AuctionService
+    -logger: Logger
+  }
+  class FetchHistoryCommand {
+    ~FetchHistoryCommand(auctionService: AuctionService): public
+    +execute(clientHandler: ClientHandler, packet: PacketReq): void
+    -auctionService: AuctionService
+    -logger: Logger
+  }
+  class FetchSellerItemsCommand {
+    ~FetchSellerItemsCommand(itemService: ItemService): public
+    +execute(clientHandler: ClientHandler, packet: PacketReq): void
+    -itemService: ItemService
+    -logger: Logger
+    -sendError(clientHandler: ClientHandler, message: String): void
+  }
+  class FetchUsersCommand {
+    ~FetchUsersCommand(userService: UserService): public
+    +execute(clientHandler: ClientHandler, packet: PacketReq): void
+    -logger: Logger
+    -sendError(clientHandler: ClientHandler, message: String): void
+    -userService: UserService
+  }
+  class LoginCommand {
+    ~LoginCommand(userService: UserService): public
+    +execute(clientHandler: ClientHandler, packet: PacketReq): void
+    -logger: Logger
+    -sendError(clientHandler: ClientHandler, message: String): void
+    -userService: UserService
+  }
+  interface PacketListener {
+    ~handle(packet: T): void
+  }
+  class PlaceBidCommand {
+    ~PlaceBidCommand(bidService: BidService, userService: UserService, auctionService: AuctionService): public
+    +execute(clientHandler: ClientHandler, packet: PacketReq): void
+    -auctionService: AuctionService
+    -bidService: BidService
+    -broadcastAuctionList(clientHandler: ClientHandler): void
+    -logger: Logger
+    -sendError(clientHandler: ClientHandler, message: String): void
+    -sendWalletUpdate(clientHandler: ClientHandler, user: User): void
+    -userService: UserService
+  }
+  class RegisterCommand {
+    ~RegisterCommand(userService: UserService): public
+    +execute(clientHandler: ClientHandler, packet: PacketReq): void
+    -logger: Logger
+    -sendError(clientHandler: ClientHandler, message: String): void
+    -userService: UserService
+  }
+  class Server {
+    ~Server(): private
+    +broadcast(packet: PacketRes, excludeUser: int): void
+    +getInstance()
+    +getOnlineUserCount(): int
+    +isUserOnline(userId: int): boolean
+    +PORT: int
+    +registerClient(userId: int, handler: ClientHandler): void
+    +removeClient(userId: int, handler: ClientHandler): void
+    +shutdown(): void
+    +start(): void
+    -auctionMaintenancePool: ScheduledExecutorService
+    -auctionService: AuctionService
+    -bidService: BidService
+    -broadcastAuctionList(): void
+    -broadcastPool: ExecutorService
+    -clientPool: ExecutorService
+    -initService(): void
+    -instance: Server
+    -itemService: ItemService
+    -logger: Logger
+    -running: boolean
+    -serverSocket: ServerSocket
+    -shutdownExecutor(executor: ExecutorService, name: String): void
+    -startAuctionMaintenance(): void
+    -userService: UserService
+  }
+  class SettleWalletCommand {
+    ~SettleWalletCommand(auctionService: AuctionService, userService: UserService): public
+    +execute(clientHandler: ClientHandler, packet: PacketReq): void
+    -auctionService: AuctionService
+    -logger: Logger
+    -sendError(clientHandler: ClientHandler, message: String): void
+    -userService: UserService
+  }
+  class UpdateItemCommand {
+    ~UpdateItemCommand(itemService: ItemService): public
+    +execute(clientHandler: ClientHandler, packet: PacketReq): void
+    -itemService: ItemService
+    -logger: Logger
+    -sendError(clientHandler: ClientHandler, message: String): void
+  }
+}
+
+package app.server.service {
+  class AntiSnipeService {
+    ~AntiSnipeService(): public
+    +apply(auction: Auction): void
+    -clock: Clock
+    -EXTENSION_SECONDS: int
+    -THRESHOLD_SECONDS: int
+  }
+  class AuctionMapper {
+    ~AuctionMapper(itemDAO: ItemDAO, bidDAO: BidDAO): public
+    +toDetail(auction: Auction): AuctionDetail
+    +toSummary(auction: Auction): AuctionSummary
+    -bidDAO: BidDAO
+    -getCurrentPrice(auctionId: int, fallback: long): long
+    -itemDAO: ItemDAO
+  }
+  class AuctionService {
+    ~AuctionService(auctionDAO: AuctionDAO, bidDAO: BidDAO, itemDAO: ItemDAO, userDAO: UserDAO, transactionManager: TransactionManager): public
+    ~SummaryCacheSnapshot(: of(): new
+    +cancelAuctionByAdmin(auctionId: int, adminId: int, expectedVersion: int): void
+    +completeExpiredAuctions(): List
+    +createAndStartAuction(itemId: int, sellerId: int, startingPrice: long, minutes: int): Auction
+    +createAuction(auction: Auction): Auction
+    +getAllAuctions(): List
+    +getAllAuctionSummariesForAdmin(userId: int): List
+    +getAuctionById(auctionId: int): Auction
+    +getAuctionDetail(auctionId: int): AuctionDetail
+    +getAuctionResult(auctionId: int): AuctionResultResponse
+    +getAuctionSummaries(): List
+    +getHistorySummaries(userId: int): List
+    +handleCompletion(auctionId: int): void
+    +invalidateCache(): void
+    +setEndTime(auctionId: int, endTime: LocalDateTime): void
+    +setStartTime(auctionId: int, startTime: LocalDateTime): void
+    +updateStatus(auctionId: int, status: AuctionStatus): void
+    -auctionDAO: AuctionDAO
+    -auctionMapper: AuctionMapper
+    -bidDAO: BidDAO
+    -CacheSnapshot(data: List, loaded: boolean): record
+    -clock: Clock
+    -logger: Logger
+    -releaseWallets(conn: Connection, auction: Auction): void
+    -requireAdmin(userId: int): void
+    -requireAuction(conn: Connection, auctionId: int): Auction
+    -settleWallets(conn: Connection, auction: Auction): void
+    -snapshot: CacheSnapshot
+    -SummaryCacheSnapshot(data: List, loaded: boolean): record
+    -summarySnapshot: SummaryCacheSnapshot
+    -transactionManager: TransactionManager
+    -userDAO: UserDAO
+    -validateAuctionTime(auction: Auction): void
+  }
+  class BidService {
+    ~BidService(bidDAO: BidDAO, auctionDAO: AuctionDAO, userDAO: UserDAO, transactionManager: TransactionManager, bidValidator: BidValidator, antiSnipeService: AntiSnipeService): public
+    +placeBid(auctionId: int, userId: int, bidAmount: long): PlaceBidResponse
+    -antiSnipeService: AntiSnipeService
+    -auctionDAO: AuctionDAO
+    -bidDAO: BidDAO
+    -bidValidator: BidValidator
+    -transactionManager: TransactionManager
+    -userDAO: UserDAO
+  }
+  class BidValidator {
+    +validateAuctionState(auction: Auction): void
+    +validateBidAmount(bidAmount: long, currentPrice: long): void
+    +validateSelfBid(userId: int, currentWinnerId: Integer): void
+    -MIN_INCREMENT: long
+  }
+  class ItemService {
+    ~ItemService(itemDAO: ItemDAO, auctionDAO: AuctionDAO, transactionManager: TransactionManager): public
+    ~ItemService(itemDAO: ItemDAO, transactionManager: TransactionManager): public
+    +add(item: Item): Item
+    +delete(id: int): void
+    +getAll(): List
+    +getById(id: int): Optional
+    +getSellerItems(requesterId: int, requesterRole: UserRole, requestedSellerId: int): List
+    +softDeleteManagedItem(itemId: int, requesterId: int, requesterRole: UserRole): Item
+    +update(item: Item): void
+    +updateManagedItem(item: Item, requesterId: int, requesterRole: UserRole): Item
+    +updateStatus(id: int, status: ItemStatus): void
+    -auctionDAO: AuctionDAO
+    -ensureItemNotRunning(conn: Connection, itemId: int): void
+    -ensureManagePermission(item: Item, requesterId: int, requesterRole: UserRole): void
+    -itemDAO: ItemDAO
+    -transactionManager: TransactionManager
+    -validateItemData(item: Item): void
+    -validateManageRequest(itemId: int, requesterId: int, requesterRole: UserRole): void
+  }
+  class UserService {
+    ~UserService(userDAO: UserDAO, transactionManager: TransactionManager): public
+    +changePassword(username: String, oldPassword: String, newPassword: String): void
+    +deposit(userId: int, amount: BigDecimal): User
+    +getAllUsers(requesterId: int): List
+    +getById(userId: int): User
+    +login(username: String, rawPassword: String): User
+    +register(user: User): User
+    +reserveBidAmount(userId: int, auctionId: int, bidAmount: BigDecimal): BigDecimal
+    +restoreFrozenAmount(userId: int, auctionId: int, previousAmount: BigDecimal): User
+    +settleFrozenAmount(userId: int, auctionId: int, winner: boolean): User
+    +updateProfile(user: User): void
+    +withdraw(username: String, password: String, amount: BigDecimal): void
+    -transactionManager: TransactionManager
+    -userDAO: UserDAO
+    -validateNotBlank(value: String, fieldName: String): void
+  }
+}
+
+package app.server.utils {
+  class AlertUtils {
+    +showError(header: String, content: String): void
+    +showInfo(header: String, content: String): void
+  }
+  class JsonUtil {
+    +fromJson(json: String, clazz: Class): T
+    +toJson(obj: Object): String
+    -GSON: Gson
+  }
+  class PasswordUtils {
+    +hashPassword(password: String): String
+    +verify(plainTextPassword: String, hashedPasswordInDb: String): boolean
+  }
+}
+
+AuctionService --> AuctionDAO
+AuctionService --> BidDAO
+AuctionService --> UserDAO
+AuctionService --> TransactionManager
+AuctionService --> AuctionMapper
+Session --> User
+Command <|.. UpdateItemCommand
+UpdateItemCommand --> ItemService
+BidService --> BidDAO
+BidService --> AuctionDAO
+BidService --> UserDAO
+BidService --> TransactionManager
+BidService --> BidValidator
+BidService --> AntiSnipeService
+PacketRes --> PacketType
+Cleanable <|.. MyHistoryController
+MyHistoryController --> Client
+MyHistoryController --> User
+MyHistoryController --> PacketListener
+Request <|.. LoginRequest
+Command <|.. SettleWalletCommand
+SettleWalletCommand --> AuctionService
+SettleWalletCommand --> UserService
+Application <|-- Main
+User <|-- Seller
+Response <|.. CreateAuctionResponse
+NavigationManager --> NavigationManager
+Client --> Client
+Client --> User
+Response <|.. WalletUpdateResponse
+Entity <|-- User
+User --> Account
+User --> Wallet
+User --> UserRole
+LoginController --> PacketListener
+Command <|.. FetchAuctionDetailCommand
+FetchAuctionDetailCommand --> AuctionService
+Command <|.. LoginCommand
+LoginCommand --> UserService
+User <|-- Admin
+Command <|.. DepositCommand
+DepositCommand --> UserService
+User <|-- Bidder
+Response <|.. CancelAuctionResponse
+Request <|.. AuctionsRequest
+RuntimeException <|-- AppException
+Response <|.. UsersResponse
+Request <|.. HistoryRequest
+Response <|.. ChatResponse
+Response <|.. AuctionsResponse
+Item <|-- Art
+Command <|.. ChatCommand
+Command <|.. CancelAuctionCommand
+CancelAuctionCommand --> AuctionService
+Command <|.. FetchHistoryCommand
+FetchHistoryCommand --> AuctionService
+UserService --> UserDAO
+UserService --> TransactionManager
+Request <|.. SettleWalletRequest
+Request <|.. FetchSellerItemsRequest
+Request <|.. DeleteItemRequest
+Response <|.. RegisterResponse
+Command <|.. FetchSellerItemsCommand
+FetchSellerItemsCommand --> ItemService
+Server --> Server
+Server --> AuctionService
+Server --> BidService
+Server --> UserService
+Server --> ItemService
+Request <|.. CancelAuctionRequest
+Response <|.. LoginResponse
+Response <|.. AuctionDetailResponse
+DataStore --> User
+DataStore --> Auction
+DataStore --> DataStore
+Response <|.. AuctionResultResponse
+AppException <|-- DatabaseException
+Command <|.. FetchAuctionsCommand
+FetchAuctionsCommand --> AuctionService
+Entity <|-- Item
+Item --> ItemType
+Item --> ItemStatus
+RuntimeException <|-- ConnectException
+Runnable <|.. ClientHandler
+ClientHandler --> Session
+Response <|.. BidResponse
+Request <|.. CreateAuctionRequest
+BaseDAO <|-- MySqlAuctionDAO
+AuctionDAO <|.. MySqlAuctionDAO
+Request <|.. FetchUsersRequest
+Auction --> AuctionStatus
+RegisterController --> PacketListener
+Request <|.. DepositRequest
+AppException <|-- ServiceException
+MessController --> Client
+MessController --> PacketListener
+Cleanable <|.. FirstScene
+FirstScene --> Client
+FirstScene --> PacketListener
+FirstScene --> PacketListener
+FirstScene --> PacketListener
+Request <|.. AuctionDetailRequest
+Cleanable <|.. DepositController
+DepositController --> Client
+DepositController --> PacketListener
+PacketReq --> PacketType
+HistoryRecord --> HistoryType
+Item <|-- Vehicle
+Command <|.. FetchUsersCommand
+FetchUsersCommand --> UserService
+Request <|.. UpdateItemRequest
+Command <|.. CreateAuctionCommand
+CreateAuctionCommand --> AuctionService
+CreateAuctionCommand --> ItemService
+BaseDAO <|-- MySqlAutoBidDAO
+AutoBidDAO <|.. MySqlAutoBidDAO
+BaseDAO <|-- MySqlUserDAO
+UserDAO <|.. MySqlUserDAO
+Request <|.. ChatRequest
+Response <|.. PlaceBidResponse
+Command <|.. PlaceBidCommand
+PlaceBidCommand --> BidService
+PlaceBidCommand --> UserService
+PlaceBidCommand --> AuctionService
+Request <|.. PlaceBidRequest
+Command <|.. FetchAuctionResultCommand
+FetchAuctionResultCommand --> AuctionService
+Response <|.. ItemResponse
+Cleanable <|.. LiveController
+LiveController --> Auction
+LiveController --> AuctionDetail
+LiveController --> PacketListener
+LiveController --> PacketListener
+LiveController --> PacketListener
+LiveController --> PacketListener
+AuctionMapper --> ItemDAO
+AuctionMapper --> BidDAO
+BaseDAO <|-- MySqlBidDAO
+BidDAO <|.. MySqlBidDAO
+Response <|.. HistoryResponse
+ItemService --> ItemDAO
+ItemService --> AuctionDAO
+ItemService --> TransactionManager
+BaseDAO <|-- MySqlItemDAO
+ItemDAO <|.. MySqlItemDAO
+Request <|.. RegisterRequest
+Command <|.. RegisterCommand
+RegisterCommand --> UserService
+Request <|.. AuctionResultRequest
+Request <|.. BidRequest
+AuctionController --> PacketListener
+Response <|.. ItemListResponse
+Item <|-- Electronics
+Command <|.. DeleteItemCommand
+DeleteItemCommand --> ItemService
+@enduml

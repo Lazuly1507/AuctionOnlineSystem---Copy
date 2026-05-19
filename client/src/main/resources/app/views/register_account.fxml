@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.FontWeight?>
+<?import javafx.scene.control.RadioButton?>
+<AnchorPane fx:id="rootPane" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #0a0f16;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.client.controllers.RegisterController">
+    <children>
+        <VBox alignment="TOP_CENTER" maxHeight="Infinity" maxWidth="450.0" minHeight="0.0" minWidth="400.0" prefWidth="420.0" spacing="20.0"
+              style="-fx-background-color: rgba(22, 33, 49, 0.9);
+                     -fx-background-radius: 30;
+                     -fx-padding: 40;
+                     -fx-border-color: rgba(230, 194, 122, 0.5);
+                     -fx-border-width: 2;
+                     -fx-border-radius: 30;
+                     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 20, 0, 0, 10);"
+              AnchorPane.bottomAnchor="80.0" AnchorPane.rightAnchor="80.0">
+            <children>
+                <!-- Tiêu đề ĐĂNG KÝ -->
+                <Label style="-fx-font-size: 32px;
+                             -fx-font-weight: bold;
+                             -fx-text-fill: white;
+                             -fx-effect: dropshadow(gaussian, rgba(230, 194, 122, 0.7), 15, 0.3, 0, 0);
+                             -fx-font-family: 'Sitka Text', 'Serif';"
+                       text="ĐĂNG KÝ TÀI KHOẢN" />
+                <!-- Đăng nhập -->
+                <HBox alignment="CENTER" spacing="8">
+                    <Label style="-fx-font-size: 14px; -fx-text-fill: #bdc3c7;" text="Bạn đã có tài khoản?" />
+                    <Label fx:id="lblLogin" onMouseClicked="#backToLoginMouse"
+                           style="-fx-font-size: 14px;
+                                  -fx-font-weight: bold;
+                                  -fx-text-fill: #44bd32;
+                                  -fx-cursor: hand;"
+                           text="Đăng Nhập Ngay" />
+                </HBox>
+                <!-- Input Groups -->
+                <VBox spacing="15.0">
+                    <children>
+                        <VBox spacing="8.0">
+                            <Label style="-fx-font-size: 13px; -fx-text-fill: #ecf0f1;" text="Họ và tên" />
+                            <TextField fx:id="txtName" promptText="Nhập họ và tên..."
+                                       style="-fx-background-color: #0d1621;
+                                              -fx-text-fill: white;
+                                              -fx-border-color: #34495e;
+                                              -fx-border-radius: 10;
+                                              -fx-background-radius: 10;
+                                              -fx-padding: 12;" />
+                        </VBox>
+                        <VBox spacing="8.0">
+                            <Label style="-fx-font-size: 13px; -fx-text-fill: #ecf0f1;" text="Tên đăng nhập / Email" />
+                            <TextField fx:id="txtAccount" promptText="Nhập tên đăng nhập..."
+                                       style="-fx-background-color: #0d1621;
+                                              -fx-text-fill: white;
+                                              -fx-border-color: #34495e;
+                                              -fx-border-radius: 10;
+                                              -fx-background-radius: 10;
+                                              -fx-padding: 12;" />
+                        </VBox>
+                        <VBox spacing="8.0">
+                            <Label style="-fx-font-size: 13px; -fx-text-fill: #ecf0f1;" text="Mật khẩu" />
+                            <PasswordField fx:id="txtPassword" promptText="••••••••"
+                                           style="-fx-background-color: #0d1621;
+                                                  -fx-text-fill: white;
+                                                  -fx-border-color: #34495e;
+                                                  -fx-border-radius: 10;
+                                                  -fx-background-radius: 10;
+                                                  -fx-padding: 12;" />
+                            <HBox spacing="20" alignment="CENTER">
+                                <RadioButton fx:id="rbSeller" text="Seller"/>
+                                <RadioButton fx:id="rbBidder" text="Bidder"/>
+                            </HBox>
+                        </VBox>
+                    </children>
+                </VBox>
+                <!-- Nút Register -->
+                <Button fx:id="registerButton" maxWidth="Infinity" onAction="#handleRegister" prefHeight="50.0"
+                        style="-fx-background-color: linear-gradient(to bottom, #673ab7, #512a7f);
+                               -fx-text-fill: white;
+                               -fx-font-size: 18px;
+                               -fx-font-weight: bold;
+                               -fx-background-radius: 15;
+                               -fx-cursor: hand;
+                               -fx-effect: dropshadow(gaussian, rgba(103, 58, 183, 0.5), 10, 0, 0, 5);"
+                        text="ĐĂNG KÝ" />
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

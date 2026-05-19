@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane fx:id="rootPane" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #0a0f16;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.client.controllers.LoginController">
+    <children>
+        <VBox alignment="TOP_CENTER" maxHeight="Infinity" maxWidth="450.0" minHeight="0.0" minWidth="400.0" prefWidth="420.0" spacing="20.0" style="-fx-background-color: rgba(22, 33, 49, 0.9);                      -fx-background-radius: 30;                      -fx-padding: 40;                      -fx-border-color: rgba(230, 194, 122, 0.5);                      -fx-border-width: 2;                      -fx-border-radius: 30;                      -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 20, 0, 0, 10);" AnchorPane.bottomAnchor="80.0" AnchorPane.rightAnchor="80.0">
+            <children>
+                <!-- Tiêu đề VẠN BẢO CÁC -->
+                <Label style="-fx-font-size: 38px;                              -fx-font-weight: bold;                              -fx-text-fill: white;                              -fx-effect: dropshadow(gaussian, rgba(230, 194, 122, 0.7), 15, 0.3, 0, 0);                              -fx-font-family: 'Sitka Text', 'Serif';" text="VẠN BẢO CÁC" />
+                <!-- Đăng ký -->
+                <HBox alignment="CENTER" spacing="8">
+                    <Label style="-fx-font-size: 14px; -fx-text-fill: #bdc3c7;" text="Bạn chưa có tài khoản?" />
+                    <Label fx:id="lblRegister" onMouseClicked="#switchToRegister" style="-fx-font-size: 14px;                                   -fx-font-weight: bold;                                   -fx-text-fill: #44bd32;                                   -fx-cursor: hand;" text="Đăng Ký Ngay" />
+                </HBox>
+                <!-- Input Groups -->
+                <VBox spacing="15.0">
+                    <children>
+                        <VBox spacing="8.0">
+                            <Label style="-fx-font-size: 13px; -fx-text-fill: #ecf0f1;" text="Tên đăng nhập / Email" />
+                            <TextField fx:id="account" promptText="Nhập tài khoản..." style="-fx-background-color: #0d1621;                                               -fx-text-fill: white;                                               -fx-border-color: #34495e;                                               -fx-border-radius: 10;                                               -fx-background-radius: 10;                                               -fx-padding: 12;" />
+                        </VBox>
+                        <VBox spacing="8.0">
+                            <Label style="-fx-font-size: 13px; -fx-text-fill: #ecf0f1;" text="Mật khẩu" />
+                            <PasswordField fx:id="password" promptText="••••••••" style="-fx-background-color: #0d1621;                                                   -fx-text-fill: white;                                                   -fx-border-color: #34495e;                                                   -fx-border-radius: 10;                                                   -fx-background-radius: 10;                                                   -fx-padding: 12;" />
+                        </VBox>
+                    </children>
+                </VBox>
+                <HBox alignment="CENTER_LEFT">
+                    <Label style="-fx-font-size: 13px;                                   -fx-text-fill: #3498db;                                   -fx-cursor: hand;" text="Quên mật khẩu?" />
+                </HBox>
+                <!-- Nút Login Xanh -->
+                <Button fx:id="loginButton" maxWidth="Infinity" onAction="#handleLogin" prefHeight="50.0" style="-fx-background-color: linear-gradient(to bottom, #3498db, #2980b9);                                -fx-text-fill: white;                                -fx-font-size: 18px;                                -fx-font-weight: bold;                                -fx-background-radius: 15;                                -fx-cursor: hand;                                -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.5), 10, 0, 0, 5);" text="ĐĂNG NHẬP" />
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

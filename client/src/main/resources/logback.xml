@@ -1,0 +1,33 @@
+<configuration>
+    <!-- 1. Console Appender: Dùng khi chạy dev trên IDE -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- Thêm ngày tháng vào pattern để dễ theo dõi -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!-- 2. Rolling File Appender: Dành cho Server -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- Đường dẫn lưu file log hiện tại -->
+        <file>logs/vanbaocac-client.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Tên file khi quay vòng (cắt theo ngày) -->
+            <fileNamePattern>logs/vanbaocac-server.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- Chỉ giữ log trong vòng 30 ngày gần nhất -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!-- 3. Tùy chỉnh Log Level theo Package -->
+    <!-- Hiển thị log chi tiết (DEBUG) cho source code của riêng bạn -->
+    <logger name="app" level="INFO"/>
+    <logger name="network" level="DEBUG"/> <!-- Nếu bạn có package xử lý socket riêng -->
+    <!-- 4. Root Logger -->
+    <!-- Mức mặc định cho toàn bộ thư viện bên ngoài (tránh in ra quá nhiều log rác) -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </root>
+  </configuration>

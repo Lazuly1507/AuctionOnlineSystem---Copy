@@ -1,0 +1,232 @@
+/* =============================================
+  BIDZONE – DEEP NAVY THEME
+  Nền tổng thể : #080c18  (navy đen sâu)
+  Card / Panel : #0f1424  (navy tối)
+  Viền    : #1a2236  (blue-dark)
+  Accent/Nút  : #2d5cf7  (electric blue)
+  Chữ    : #ffffff
+  Chữ phụ   : #8a9bbf
+============================================= */
+  /* --- NỀN TỔNG THỂ --- */
+.root {
+  -fx-background-color: #080c18 !important;
+}
+  /* --- TẤT CẢ CONTAINER: HBOX, VBOX, ANCHORPANE, PANE, GRIDPANE, BORDERPANE, STACKPANE --- */
+.pane,
+.anchor-pane,
+.hbox,
+.vbox,
+.grid-pane,
+.border-pane,
+.stack-pane,
+.flow-pane,
+.tile-pane,
+.split-pane,
+.split-pane > .split-pane-divider {
+  -fx-background-color: #080c18 !important;
+}
+  /* --- CARD / PANEL NỔI --- */
+.card,
+.tab-pane > .tab-content-area,
+.titled-pane > .content {
+  -fx-background-color: #0f1424 !important;
+  -fx-background-radius: 12;
+  -fx-border-color: #1a2236;
+  -fx-border-width: 1;
+  -fx-border-radius: 12;
+}
+  /* --- CHỮ --- */
+.label,
+.text {
+  -fx-text-fill: #ffffff !important;
+  -fx-fill: #ffffff !important;
+  -fx-opacity: 1.0 !important;
+}
+  /* Chữ phụ / mô tả */
+.label.secondary,
+.text.secondary {
+  -fx-text-fill: #8a9bbf !important;
+  -fx-fill: #8a9bbf !important;
+}
+  /* --- Ô NHẬP LIỆU --- */
+.text-field,
+.password-field,
+.text-area {
+  -fx-background-color: #0a0f1e !important;
+  -fx-text-fill: #ffffff !important;
+  -fx-prompt-text-fill: #4a5a7a !important;
+  -fx-border-color: #1a2236 !important;
+  -fx-border-radius: 6;
+  -fx-background-radius: 6;
+  -fx-opacity: 1.0 !important;
+}
+  .text-field .text,
+.password-field .text,
+.text-area .text {
+  -fx-fill: #ffffff !important;
+}
+  /* --- NÚT BẤM --- */
+/* --- NÚT BẤM SIÊU ẢO (BIDZONE STYLE) --- */
+.button {
+  /* Hiệu ứng màu loang từ xanh sáng sang xanh đậm hơn một chút */
+  -fx-background-color: linear-gradient(to bottom right, #3b82f6, #2d5cf7) !important;
+  -fx-text-fill: #ffffff !important;
+  -fx-font-weight: 800 !important;
+  -fx-font-size: 15px;
+  -fx-background-radius: 10;
+  -fx-padding: 12 25;
+  -fx-cursor: hand;
+  /* Hiệu ứng đổ bóng phát sáng (Glow) */
+  -fx-effect: dropshadow(three-pass-box, rgba(45, 92, 247, 0.4), 15, 0, 0, 0);
+  /* Làm mượt chuyển động */
+  -fx-transition: 0.3s;
+}
+  /* Khi di chuột qua: Nút sáng rực lên */
+.button:hover {
+  -fx-background-color: linear-gradient(to bottom right, #60a5fa, #3b82f6) !important;
+  /* Tăng độ phát sáng xanh khi hover */
+  -fx-effect: dropshadow(three-pass-box, rgba(45, 92, 247, 0.7), 20, 0, 0, 0);
+}
+  /* Khi nhấn vào: Nút lún xuống và tối lại một chút */
+.button:pressed {
+  -fx-background-color: #1e45d6 !important;
+  -fx-effect: dropshadow(three-pass-box, rgba(45, 92, 247, 0.2), 5, 0, 0, 0);
+  -fx-translate-y: 2; /* Hiệu ứng nhấn nút thật */
+}
+/* --- COMBOBOX --- */
+.combo-box {
+  -fx-background-color: #0a0f1e !important;
+  -fx-border-color: #1a2236 !important;
+  -fx-border-radius: 6;
+  -fx-background-radius: 6;
+}
+  .combo-box > .label {
+  -fx-text-fill: #ffffff !important;
+}
+  .combo-box .arrow {
+  -fx-background-color: #2d5cf7 !important;
+}
+  /* --- BOX CHỌN (POPUP) ĐỒNG BỘ VỚI NỀN TỔNG --- */
+.combo-box-popup .list-view {
+  -fx-background-color: #0a0b10 !important; /* Trùng khít với màu nền tổng bạn đang dùng */
+  -fx-border-color: #1a2236 !important;  /* Viền xanh tối để vẫn phân biệt được khối box */
+  -fx-border-width: 1px !important;
+  -fx-background-radius: 6;
+  -fx-border-radius: 6;
+}
+  .combo-box-popup .list-cell {
+  -fx-background-color: #0a0b10 !important; /* Nền của từng dòng cũng là màu đó */
+  -fx-text-fill: #ffffff !important;    /* Chữ trắng cho nét */
+  -fx-padding: 8 12;  /* Khoảng cách cho dễ chọn */
+}
+  /* Hiệu ứng khi lướt chuột qua các mục (Art, Electric...) */
+.combo-box-popup .list-cell:hover {
+  -fx-background-color: #2d5cf7 !important; /* Khi di chuột vào thì hiện xanh Electric chuẩn BidZone */
+  -fx-text-fill: #ffffff !important;
+}
+  /* --- LIST VIEW --- */
+.list-view {
+  -fx-background-color: #0f1424 !important;
+  -fx-border-color: #1a2236 !important;
+}
+  .list-cell {
+  -fx-background-color: transparent !important;
+  -fx-text-fill: #ffffff !important;
+}
+  .list-cell:hover {
+  -fx-background-color: #1a2236 !important;
+}
+  .list-cell:selected {
+  -fx-background-color: #1e3a8a !important;
+}
+  /* --- TABLE VIEW --- */
+.table-view {
+  -fx-background-color: #0f1424 !important;
+  -fx-border-color: #1a2236 !important;
+}
+  .table-view .column-header,
+.table-view .column-header-background {
+  -fx-background-color: #080c18 !important;
+}
+  .table-row-cell {
+  -fx-background-color: #0f1424 !important;
+  -fx-text-fill: #ffffff !important;
+  -fx-border-color: #1a2236 !important;
+  -fx-border-width: 0 0 1 0;
+}
+  .table-row-cell:hover {
+  -fx-background-color: #1a2236 !important;
+}
+  .table-row-cell:selected {
+  -fx-background-color: #1e3a8a !important;
+}
+  .table-cell {
+  -fx-text-fill: #ffffff !important;
+}
+  /* --- TAB PANE --- */
+.tab-pane {
+  -fx-background-color: #080c18 !important;
+}
+  .tab-pane .tab-header-area {
+  -fx-background-color: #0f1424 !important;
+}
+  .tab {
+  -fx-background-color: #080c18 !important;
+}
+  .tab:selected {
+  -fx-background-color: #2d5cf7 !important;
+}
+  .tab .tab-label {
+  -fx-text-fill: #8a9bbf !important;
+}
+  .tab:selected .tab-label {
+  -fx-text-fill: #ffffff !important;
+}
+  /* --- MENU / MENU BAR --- */
+.menu-bar {
+  -fx-background-color: #0f1424 !important;
+}
+  .menu, .menu-item {
+  -fx-background-color: #0f1424 !important;
+  -fx-text-fill: #ffffff !important;
+}
+  .menu-item:hover,
+.menu-item:focused {
+  -fx-background-color: #1a2236 !important;
+}
+  /* --- SCROLL PANE --- */
+.scroll-pane,
+.scroll-pane > .viewport {
+  -fx-background-color: transparent !important;
+}
+  .scroll-bar {
+  -fx-background-color: #0a0f1e !important;
+}
+  .scroll-bar .thumb {
+  -fx-background-color: #1a2236 !important;
+  -fx-background-radius: 4;
+}
+  .scroll-bar .thumb:hover {
+  -fx-background-color: #2d5cf7 !important;
+}
+  /* --- SEPARATOR --- */
+.separator .line {
+  -fx-border-color: #1a2236 !important;
+}
+  /* --- CHECKBOX --- */
+.check-box .box {
+  -fx-background-color: #0a0f1e !important;
+  -fx-border-color: #1a2236 !important;
+  -fx-border-radius: 4;
+}
+  .check-box:selected .mark {
+  -fx-background-color: #2d5cf7 !important;
+}
+  /* --- TOOLTIP --- */
+.tooltip {
+  -fx-background-color: #0f1424 !important;
+  -fx-text-fill: #ffffff !important;
+  -fx-border-color: #1a2236 !important;
+  -fx-border-radius: 6;
+  -fx-background-radius: 6;
+}

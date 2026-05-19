@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+  <BorderPane prefHeight="720.0" prefWidth="1280.0"
+            style="-fx-background-color: #0f1424;"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="app.client.controllers.FirstScene">
+    <top>
+        <VBox style="-fx-background-color: #11182d;">
+            <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="20.0"
+                  style="-fx-background-color: #11182d;">
+                <padding>
+                    <Insets left="40.0" right="40.0" />
+                </padding>
+                <Label style="-fx-font-weight: bold; -fx-font-size: 24px;"
+                       text="LOPPY AUCTION" textFill="#673ab7" />
+                <Region HBox.hgrow="ALWAYS" />
+                <!-- Thêm fx:id để searchField hoạt động -->
+                <TextField fx:id="searchField"
+                           prefWidth="300.0"
+                           promptText="Tìm kiếm tài sản đấu giá..."
+                           style="-fx-background-radius: 20;
+                                  -fx-padding: 5 15;
+                                  -fx-border-radius: 20;
+                                  -fx-border-color: #cccccc;" />
+                <Button text="Tìm kiếm"
+                        style="-fx-background-color: #673ab7;
+                               -fx-text-fill: white;
+                               -fx-background-radius: 20;
+                               -fx-padding: 5 15;" />
+                <Button text="Làm mới"
+                        onAction="#handleReload"
+                        style="-fx-background-color: #4CAF50;
+                               -fx-text-fill: white;
+                               -fx-background-radius: 20;
+                               -fx-padding: 5 15;" />
+                <Region prefWidth="20.0" HBox.hgrow="SOMETIMES" />
+                <Button fx:id="btnAuth"
+                        onAction="#handleAuth"
+                        text="Đăng nhập / Đăng ký"
+                        style="-fx-background-color: transparent;
+                               -fx-text-fill: white;
+                               -fx-font-weight: bold;" />
+            </HBox>
+        </VBox>
+    </top>
+    <left>
+        <VBox prefWidth="220.0"
+              spacing="10.0"
+              style="-fx-background-color: #11182d;">
+            <padding>
+                <Insets top="20" left="15" right="15"/>
+            </padding>
+            <Button text="TRANG CHỦ"
+                    maxWidth="Infinity" prefHeight="40"
+                    style="-fx-background-color: #673ab7; -fx-text-fill: white; -fx-font-weight: bold;" />
+            <Button text="ĐẤU GIÁ CỦA TÔI"
+                    onAction="#switchToMine"
+                    maxWidth="Infinity" prefHeight="40"
+                    style="-fx-background-color: transparent; -fx-text-fill: #cdd6f4; -fx-font-weight: bold;" />
+            <Button text="TẤT CẢ ĐẤU GIÁ"
+                    onAction="#switchToAll"
+                    maxWidth="Infinity" prefHeight="40"
+                    style="-fx-background-color: transparent; -fx-text-fill: #cdd6f4; -fx-font-weight: bold;" />
+            <Button text="MESS CHAT"
+                    onAction="#switchToMess"
+                    maxWidth="Infinity" prefHeight="40"
+                    style="-fx-background-color: transparent; -fx-text-fill: #cdd6f4; -fx-font-weight: bold;" />
+            <Button text="TẠO PHIÊN ĐẤU GIÁ"
+                    onAction="#switchToOrganize"
+                    maxWidth="Infinity" prefHeight="40"
+                    style="-fx-background-color: transparent; -fx-text-fill: #cdd6f4; -fx-font-weight: bold;" />
+            <Button text="NẠP TIỀN"
+                    onAction="#switchToDeposit"
+                    maxWidth="Infinity" prefHeight="40"
+                    style="-fx-background-color: transparent; -fx-text-fill: #cdd6f4; -fx-font-weight: bold;" />
+            <Region VBox.vgrow="ALWAYS" />
+            <Label fx:id="balanceLabel"
+                   text="Số dư: 0 đ"
+                   style="-fx-text-fill: #cdd6f4; -fx-font-weight: bold;" />
+        </VBox>
+    </left>
+    <center>
+        <ScrollPane fitToWidth="true"
+                    style="-fx-background: #0f1424;
+                           -fx-background-color: #0f1424;
+                           -fx-border-color: transparent;">
+            <content>
+                <VBox spacing="20.0"
+                      style="-fx-background-color: #0f1424;">
+                    <padding>
+                        <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
+                    </padding>
+                    <!-- Banner -->
+                    <StackPane prefHeight="200.0"
+                               style="-fx-background-color: #1a1f35; -fx-background-radius: 10;">
+                        <Label text="BANNER QUẢNG CÁO"
+                               style="-fx-font-size: 24px;"
+                               textFill="#999999" />
+                    </StackPane>
+                    <!-- Active Auctions -->
+                    <Label text="TÀI SẢN ĐANG ĐẤU GIÁ"
+                           style="-fx-font-weight: bold; -fx-font-size: 20px;"
+                           textFill="#673ab7" />
+                    <StackPane fx:id="activeAuctionsPane"
+                               prefHeight="360.0"
+                               style="-fx-background-color: #0f1424;" />
+                    <!-- Completed Auctions -->
+                    <Label text="TÀI SẢN ĐÃ ĐẤU GIÁ"
+                           style="-fx-font-weight: bold; -fx-font-size: 20px;"
+                           textFill="#673ab7" />
+                    <!-- CHỖ NÀY ĐÃ SỬA TỪ FLOWPANE SANG STACKPANE -->
+                    <StackPane fx:id="completedAuctionsPane"
+                               prefHeight="360.0"
+                               style="-fx-background-color: #0f1424;" />
+                    <!-- ListView ẩn để phục vụ logic search nếu cần -->
+                    <ListView fx:id="auctionListView" visible="false" managed="false" />
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

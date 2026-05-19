@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+  <AnchorPane fx:id="rootPane" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #0a0f16;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.client.controllers.ConnectServerController">
+    <children>
+        <VBox alignment="TOP_CENTER" maxHeight="Infinity" maxWidth="450.0" minHeight="0.0" minWidth="400.0" prefWidth="420.0" spacing="20.0" style="-fx-background-color: rgba(22, 33, 49, 0.9);                      -fx-background-radius: 30;                      -fx-padding: 40;                      -fx-border-color: rgba(230, 194, 122, 0.5);                      -fx-border-width: 2;                      -fx-border-radius: 30;                      -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 20, 0, 0, 10);" AnchorPane.bottomAnchor="80.0" AnchorPane.rightAnchor="80.0">
+            <children>
+                <!-- Tiêu đề KẾT NỐI SERVER -->
+                <Label style="-fx-font-size: 32px;                              -fx-font-weight: bold;                              -fx-text-fill: white;                              -fx-effect: dropshadow(gaussian, rgba(230, 194, 122, 0.7), 15, 0.3, 0, 0);                              -fx-font-family: 'Sitka Text', 'Serif';" text="KẾT NỐI SERVER" />
+                <!-- Mô tả -->
+                <Label style="-fx-font-size: 14px;                              -fx-text-fill: #bdc3c7;                              -fx-text-alignment: center;" text="Vui lòng kết nối tới server để tiếp tục" wrapText="true" />
+                <!-- Nút Connect -->
+                <Button fx:id="connectButton" maxWidth="Infinity" onAction="#connectServer" prefHeight="50.0" style="-fx-background-color: linear-gradient(to bottom, #673ab7, #512a7f);                                -fx-text-fill: white;                                -fx-font-size: 18px;                                -fx-font-weight: bold;                                -fx-background-radius: 15;                                -fx-cursor: hand;                                -fx-effect: dropshadow(gaussian, rgba(103, 58, 183, 0.5), 10, 0, 0, 5);" text="KẾT NỐI" />
+                <!-- Status Label -->
+                <Label fx:id="statusLabel" style="-fx-font-size: 14px;                               -fx-text-fill: #999999;                               -fx-text-alignment: center;" text="Đang chờ kết nối..." wrapText="true" />
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
