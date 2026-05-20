@@ -29,6 +29,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import org.slf4j.Logger;
@@ -49,6 +50,7 @@ public class LiveController implements Cleanable {
   @FXML private TextField bidAmountField;
   @FXML private TextArea description;
   @FXML private Label availableBalanceLabel;
+  @FXML private ProgressIndicator detailLoadingIndicator;
   private ScheduledExecutorService scheduler;
   private boolean resultRequested = false;
   private boolean auctionClosedShown = false;
@@ -59,6 +61,8 @@ public class LiveController implements Cleanable {
   private boolean bidLoading;
   private Button bidButton;
   private Runnable stopBidLoading = () -> {};
+  private boolean detailRequestInFlight;
+  private Integer requestedAuctionId;
   private final Runnable updateListener = () -> Platform.runLater(this::handleUpdateNotification);
   private final Consumer<String> messageListener =
       message -> Platform.runLater(() -> handleMessageNotification(message));
@@ -70,6 +74,7 @@ public class LiveController implements Cleanable {
     notifications.addMessageListener(messageListener);
     updateAvailableBalance();
     loadSessionAuction();
+    maybeRequestAuctionDetail();
   }
 
   /** setAuction. */
@@ -118,6 +123,7 @@ public class LiveController implements Cleanable {
   private void handleUpdateNotification() {
     loadSessionAuction();
     refreshDetailFromStore();
+    maybeRequestAuctionDetail();
     updateAvailableBalance();
   }
 
@@ -140,12 +146,72 @@ public class LiveController implements Cleanable {
     showAwaitingAuctionDetail();
   }
 
+  private void maybeRequestAuctionDetail() {
+    Integer auctionId = LiveAuctionSessionStore.getInstance().getSelectedAuctionId();
+    if (auctionId == null) {
+      setDetailLoading(false);
+      return;
+    }
+    AuctionDetail cached = AuctionStore.getInstance().getAuctionDetail(auctionId);
+    if (cached != null) {
+      LiveAuctionSessionStore.getInstance().setSelectedDetail(cached);
+      setAuction(cached);
+      detailRequestInFlight = false;
+      requestedAuctionId = null;
+      setDetailLoading(false);
+      return;
+    }
+    if (detailRequestInFlight && auctionId.equals(requestedAuctionId)) {
+      setDetailLoading(true);
+      return;
+    }
+    if (!requests.isConnected()) {
+      setDetailLoading(false);
+      AlertUtils.showError("Mất kết nối", "Vui lòng kết nối lại!");
+      return;
+    }
+    if (UserManager.getInstance().getCurrentUser() == null) {
+      setDetailLoading(false);
+      AlertUtils.showError("Chưa đăng nhập", "Bạn phải đăng nhập!");
+      NavigationManager.getInstance().navigateTo(View.LOGIN);
+      return;
+    }
+    try {
+      detailRequestInFlight = true;
+      requestedAuctionId = auctionId;
+      setDetailLoading(true);
+      requests.fetchAuctionDetail(auctionId, -1);
+    } catch (IOException e) {
+      detailRequestInFlight = false;
+      requestedAuctionId = null;
+      setDetailLoading(false);
+      AlertUtils.showError("Lỗi Kết nối", "Server không phản hồi");
+    }
+  }
+
+  private void setDetailLoading(boolean loading) {
+    if (detailLoadingIndicator != null) {
+      detailLoadingIndicator.setVisible(loading);
+      detailLoadingIndicator.setManaged(loading);
+    }
+    if (loading) {
+      showAwaitingAuctionDetail();
+    }
+  }
+
   private void handleMessageNotification(String message) {
     if (message == null || message.isBlank()) {
       return;
     }
     if (bidLoading) {
       handleBidResult(message);
+      return;
+    }
+    if (detailRequestInFlight && isFailureMessage(message)) {
+      detailRequestInFlight = false;
+      requestedAuctionId = null;
+      setDetailLoading(false);
+      AlertUtils.showError("Lỗi", message);
       return;
     }
     if (resultRequested) {
@@ -192,6 +258,9 @@ public class LiveController implements Cleanable {
       auctionDetail = cachedDetail;
       auction = cachedDetail.auction();
       applyDetail(cachedDetail);
+      detailRequestInFlight = false;
+      requestedAuctionId = null;
+      setDetailLoading(false);
       return;
     }
     Auction cachedAuction = AuctionStore.getInstance().getAuction(auction.id());
@@ -391,6 +460,9 @@ public class LiveController implements Cleanable {
     auctionClosedShown = false;
     auctionDetail = null;
     auction = null;
+    detailRequestInFlight = false;
+    requestedAuctionId = null;
+    setDetailLoading(false);
   }
 
   /** Member. */

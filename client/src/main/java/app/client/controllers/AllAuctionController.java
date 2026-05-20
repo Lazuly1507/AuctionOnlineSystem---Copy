@@ -1,6 +1,5 @@
 package app.client.controllers;
 
-import app.client.manager.AuctionNavigator;
 import app.client.manager.ClientNotificationCenter;
 import app.client.manager.ClientRequestService;
 import app.client.manager.NavigationManager;
@@ -107,7 +106,7 @@ public class AllAuctionController implements Cleanable {
     btnDetail.setMaxWidth(Double.MAX_VALUE);
     btnDetail.setStyle(
         "-fx-background-color: #673ab7;" + "-fx-text-fill: white;" + "-fx-cursor: hand;");
-    btnDetail.setOnAction(e -> AuctionNavigator.getInstance().open(summary));
+    btnDetail.setOnAction(e -> NavigationManager.getInstance().openAuctionDetail(summary));
     vbox.getChildren().addAll(imagePane, titleLabel, priceLabel, timeLabel, btnDetail);
     return vbox;
   }
