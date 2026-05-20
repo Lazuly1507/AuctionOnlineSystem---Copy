@@ -37,6 +37,7 @@ public class FetchAuctionDetailCommand extends Command {
             PacketRes.error(PacketType.FETCH_AUCTION_DETAIL, "Invalid auction id"));
         return;
       }
+      clientHandler.getSession().setViewingAuctionId(request.auctionId());
       if (auctionService.isAuctionVersionCurrent(request.auctionId(), request.knownVersion())) {
         AuctionDetailResponse response =
             AuctionDetailResponse.notModified(request.auctionId(), request.knownVersion());
