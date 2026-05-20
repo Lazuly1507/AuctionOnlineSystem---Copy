@@ -11,12 +11,12 @@ import app.common.enums.AuctionStatus;
 import app.common.enums.View;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -27,21 +27,21 @@ public class AllAuctionController implements Cleanable {
   private static final double CARD_HEIGHT = 300;
   @FXML private FlowPane runningPane;
   @FXML private ComboBox<String> typeFilterComboBox;
+  @FXML private TextField searchField;
   @FXML private FlowPane finishedPane;
   private final ClientRequestService requests = ClientRequestService.getInstance();
   private final ClientNotificationCenter notifications = ClientNotificationCenter.getInstance();
+  private final AuctionStore store = AuctionStore.getInstance();
   private final List<AuctionSummary> summaries = new ArrayList<>();
   private boolean reloadLoading;
   private Button reloadButton;
   private Runnable stopReloadLoading = () -> {};
   private final Runnable summariesListener =
-      () ->
-          Platform.runLater(
-              () -> {
-                requestAuctions();
-                rebuildUi();
-                setReloadLoading(false);
-              });
+      () -> {
+        requestAuctions();
+        rebuildUi();
+        setReloadLoading(false);
+      };
 
   /** Member. */
   @FXML
@@ -49,6 +49,7 @@ public class AllAuctionController implements Cleanable {
     typeFilterComboBox.getItems().addAll("ALL", "ELECTRONICS", "ART", "VEHICLE");
     typeFilterComboBox.setValue("ALL");
     typeFilterComboBox.setOnAction(e -> rebuildUi());
+    searchField.textProperty().addListener((obs, oldValue, newValue) -> rebuildUi());
     notifications.addUpdateListener(summariesListener);
     requestAuctions();
     rebuildUi();
@@ -56,7 +57,7 @@ public class AllAuctionController implements Cleanable {
 
   private void requestAuctions() {
     summaries.clear();
-    summaries.addAll(AuctionStore.getInstance().getAuctionSummaries());
+    summaries.addAll(store.getAuctionSummaries());
   }
 
   private void rebuildUi() {
@@ -65,14 +66,29 @@ public class AllAuctionController implements Cleanable {
     }
     runningPane.getChildren().clear();
     finishedPane.getChildren().clear();
+    String query = searchField.getText() == null ? "" : searchField.getText().trim().toLowerCase();
+    String type = typeFilterComboBox.getValue() == null ? "ALL" : typeFilterComboBox.getValue();
     for (AuctionSummary summary : summaries) {
-      VBox card = createAuctionCard(summary);
+      if (!matchFilter(summary, query, type)) {
+        continue;
+      }
       if (summary.status() == AuctionStatus.RUNNING) {
-        runningPane.getChildren().add(card);
+        runningPane.getChildren().add(createAuctionCard(summary));
       } else {
-        finishedPane.getChildren().add(card);
+        finishedPane.getChildren().add(createAuctionCard(summary));
       }
     }
+  }
+
+  private boolean matchFilter(AuctionSummary summary, String query, String type) {
+    if (summary == null) {
+      return false;
+    }
+    String name = summary.itemName() == null ? "" : summary.itemName();
+    if (!query.isBlank() && !name.toLowerCase().contains(query)) {
+      return false;
+    }
+    return "ALL".equals(type) || name.toUpperCase().contains(type);
   }
 
   private VBox createAuctionCard(AuctionSummary summary) {
