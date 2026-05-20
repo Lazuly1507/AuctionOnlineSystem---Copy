@@ -10,7 +10,12 @@ public class FetchAuctionHistoryCommand extends Command {
   public void execute(PacketRes packet) {
     if (packet.isSuccess()) {
       AuctionHistoryResponse response = packet.getData(AuctionHistoryResponse.class);
-      AuctionStore.getInstance().setHistorySummaries(response == null ? null : response.auctions());
+      if (response == null || response.fullSnapshot()) {
+        AuctionStore.getInstance()
+            .setHistorySummaries(response == null ? null : response.auctions());
+      } else {
+        AuctionStore.getInstance().appendHistorySummaries(response.auctions());
+      }
       notifyUpdate();
     }
     if (packet != null && !packet.isSuccess()) {

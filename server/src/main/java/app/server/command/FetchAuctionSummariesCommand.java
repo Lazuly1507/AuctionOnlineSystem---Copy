@@ -2,7 +2,6 @@ package app.server.command;
 
 import app.common.dto.AuctionSummariesResponse;
 import app.common.enums.PacketType;
-import app.common.mapper.DtoMapper;
 import app.common.protocol.PacketReq;
 import app.common.protocol.PacketRes;
 import app.server.network.ClientHandler;
@@ -24,10 +23,7 @@ public class FetchAuctionSummariesCommand extends Command {
   public void execute(ClientHandler clientHandler, PacketReq packet) {
     try {
       AuctionSummariesResponse response =
-          new AuctionSummariesResponse(
-              auctionService.getAuctions().stream()
-                  .map(snapshot -> DtoMapper.toAuctionSummary(snapshot.auction(), snapshot.item()))
-                  .toList());
+          new AuctionSummariesResponse(auctionService.getAuctionSummaries());
       clientHandler.sendPacket(PacketRes.of(PacketType.FETCH_AUCTION_SUMMARIES, "OK", response));
     } catch (Exception e) {
       logger.error("Failed to fetch auctions", e);

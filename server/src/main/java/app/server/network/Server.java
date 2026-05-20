@@ -103,11 +103,7 @@ public class Server {
 
   private void broadcastAuctionList() {
     try {
-      var response =
-          new AuctionSummariesResponse(
-              auctionService.getAuctions().stream()
-                  .map(snapshot -> DtoMapper.toAuctionSummary(snapshot.auction(), snapshot.item()))
-                  .toList());
+      var response = new AuctionSummariesResponse(auctionService.getAuctionSummaries());
       broadcast(PacketRes.of(PacketType.AUCTION_SUMMARIES_UPDATED, "OK", response), -1);
     } catch (Exception e) {
       logger.error("[SERVER] Failed to broadcast auction list", e);

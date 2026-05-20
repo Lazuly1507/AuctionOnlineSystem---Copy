@@ -58,13 +58,6 @@ public class CreateAuctionCommand extends Command {
           PacketRes.of(PacketType.AUCTION_CREATED, "Có phiên đấu giá mới.", response),
           user.getId());
       broadcastAuctionList();
-      AuctionHistoryResponse historyResponse =
-          new AuctionHistoryResponse(
-              auctionService.getHistoryAuctions(clientHandler.getUser().getId()).stream()
-                  .map(snapshot -> DtoMapper.toAuctionSummary(snapshot.auction(), snapshot.item()))
-                  .toList());
-      clientHandler.sendPacket(
-          PacketRes.of(PacketType.FETCH_AUCTION_HISTORY, "OK", historyResponse));
 
       logger.info("Auction created successfully by user {}", user.getId());
     } catch (ServiceException e) {
@@ -83,10 +76,7 @@ public class CreateAuctionCommand extends Command {
   private void broadcastAuctionList() {
     try {
       AuctionSummariesResponse summariesResponse =
-          new AuctionSummariesResponse(
-              auctionService.getAuctions().stream()
-                  .map(snapshot -> DtoMapper.toAuctionSummary(snapshot.auction(), snapshot.item()))
-                  .toList());
+          new AuctionSummariesResponse(auctionService.getAuctionSummaries());
       Server.broadcast(
           PacketRes.of(PacketType.AUCTION_SUMMARIES_UPDATED, "OK", summariesResponse), -1);
     } catch (Exception e) {
