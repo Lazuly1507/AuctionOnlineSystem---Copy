@@ -7,7 +7,6 @@ import app.common.dto.AuctionSummary;
 import app.common.enums.View;
 import app.common.mapper.DtoMapper;
 import java.io.IOException;
-import java.util.function.Consumer;
 import javafx.application.Platform;
 
 /** Opens auction details after ensuring the full model is cached. */
@@ -95,8 +94,7 @@ public final class AuctionNavigator {
     try {
       requests.fetchAuctionDetail(auctionId, -1);
     } catch (IOException e) {
-      notifications.removeUpdateListener(updateRef[0]);
-      notifications.removeMessageListener(messageRef[0]);
+      pending.unregister();
       AlertUtils.showError("Lỗi Kết nối", "Server không phản hồi");
     }
   }
