@@ -120,7 +120,7 @@ public class MyHistoryController implements Cleanable {
     btnDetail.setMaxWidth(Double.MAX_VALUE);
     btnDetail.setStyle(
         "-fx-background-color: #673ab7;" + "-fx-text-fill: white;" + "-fx-cursor: hand;");
-    btnDetail.setOnAction(e -> AuctionNavigator.getInstance().open(summary));
+    btnDetail.setOnAction(e -> NavigationManager.getInstance().openAuctionDetail(summary));
     vbox.getChildren().addAll(imagePane, titleLabel, priceLabel, timeLabel, btnDetail);
     return vbox;
   }

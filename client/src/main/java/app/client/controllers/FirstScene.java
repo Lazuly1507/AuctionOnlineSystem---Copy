@@ -1,6 +1,5 @@
 package app.client.controllers;
 
-import app.client.manager.AuctionNavigator;
 import app.client.manager.ClientNotificationCenter;
 import app.client.manager.ClientRequestService;
 import app.client.manager.NavigationManager;
@@ -100,7 +99,7 @@ public class FirstScene implements Cleanable {
         .addListener(
             (obs, oldVal, newVal) -> {
               if (newVal != null) {
-                AuctionNavigator.getInstance().open(newVal);
+                NavigationManager.getInstance().openAuctionDetail(newVal);
               }
             });
   }
@@ -249,7 +248,7 @@ public class FirstScene implements Cleanable {
         new Button(summary.status() == AuctionStatus.FINISHED ? "Xem kết quả" : "Chi tiết");
     btnDetail.setMaxWidth(Double.MAX_VALUE);
     btnDetail.setStyle("-fx-background-color: #673ab7;" + "-fx-text-fill: white;");
-    btnDetail.setOnAction(e -> AuctionNavigator.getInstance().open(summary));
+    btnDetail.setOnAction(e -> NavigationManager.getInstance().openAuctionDetail(summary));
     vbox.getChildren().addAll(imagePane, titleLabel, priceLabel, timeLabel, btnDetail);
     return vbox;
   }
