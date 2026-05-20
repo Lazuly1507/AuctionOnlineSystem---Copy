@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.*;
+import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -221,6 +222,45 @@ public class Server {
 
   /** broadcast. */
   public static void broadcast(PacketRes packet, int excludeUser) {
+    sendToClients(packet, user -> user.getId() != excludeUser, "Broadcast failed to user {}");
+  }
+
+  /** sendPacketToUser. */
+  public static void sendPacketToUser(int userId, PacketRes packet) {
+    ClientHandler handler = authenticatedClients.get(userId);
+    if (packet == null || !isReady(handler)) {
+      return;
+    }
+    asyncSend(handler, packet, "Packet send failed to user {}", userId);
+  }
+
+  /** broadcastToAuctionViewers. */
+  public static void broadcastToAuctionViewers(int auctionId, PacketRes packet, int excludeUser) {
+    if (auctionId <= 0) {
+      return;
+    }
+    sendToClients(
+        packet,
+        user -> user.getId() != excludeUser,
+        handler -> {
+          Integer viewingAuctionId = handler.getSession().getViewingAuctionId();
+          return viewingAuctionId != null && viewingAuctionId == auctionId;
+        },
+        "Auction viewer broadcast failed to user {} for auction {}",
+        auctionId);
+  }
+
+  private static void sendToClients(
+      PacketRes packet, Predicate<app.common.models.User> userFilter, String errorLog) {
+    sendToClients(packet, userFilter, handler -> true, errorLog);
+  }
+
+  private static void sendToClients(
+      PacketRes packet,
+      Predicate<app.common.models.User> userFilter,
+      Predicate<ClientHandler> handlerFilter,
+      String errorLog,
+      Object... logArgs) {
     if (packet == null) {
       return;
     }
@@ -228,76 +268,41 @@ public class Server {
         .values()
         .forEach(
             handler -> {
-              if (handler == null || !handler.isAuthenticated()) {
+              if (!isReady(handler) || !handlerFilter.test(handler)) {
                 return;
               }
               var user = handler.getUser();
-              if (user == null) {
+              if (!userFilter.test(user)) {
                 return;
               }
-              if (user.getId() == excludeUser) {
-                return;
-              }
-              broadcastPool.execute(
-                  () -> {
-                    try {
-                      handler.sendPacket(packet);
-                    } catch (Exception e) {
-                      logger.warn("[SERVER] Broadcast failed to user {}", user.getId(), e);
-                    }
-                  });
+              Object[] args = new Object[logArgs.length + 1];
+              args[0] = user.getId();
+              System.arraycopy(logArgs, 0, args, 1, logArgs.length);
+              asyncSend(handler, packet, errorLog, args);
             });
   }
 
-  /** sendPacketToUser. */
-  public static void sendPacketToUser(int userId, PacketRes packet) {
-    ClientHandler handler = authenticatedClients.get(userId);
-    if (handler == null || !handler.isAuthenticated() || packet == null) {
-      return;
-    }
+  private static boolean isReady(ClientHandler handler) {
+    return handler != null && handler.isAuthenticated() && handler.getUser() != null;
+  }
+
+  private static void asyncSend(
+      ClientHandler handler, PacketRes packet, String errorLog, Object... args) {
     broadcastPool.execute(
         () -> {
           try {
             handler.sendPacket(packet);
           } catch (Exception e) {
-            logger.warn("[SERVER] Packet send failed to user {}", userId, e);
+            logger.warn("[SERVER] " + errorLog, appendThrowable(args, e));
           }
         });
   }
 
-  /** broadcastToAuctionViewers. */
-  public static void broadcastToAuctionViewers(int auctionId, PacketRes packet, int excludeUser) {
-    if (packet == null || auctionId <= 0) {
-      return;
-    }
-    authenticatedClients
-        .values()
-        .forEach(
-            handler -> {
-              if (handler == null || !handler.isAuthenticated()) {
-                return;
-              }
-              var user = handler.getUser();
-              if (user == null || user.getId() == excludeUser) {
-                return;
-              }
-              Integer viewingAuctionId = handler.getSession().getViewingAuctionId();
-              if (viewingAuctionId == null || viewingAuctionId != auctionId) {
-                return;
-              }
-              broadcastPool.execute(
-                  () -> {
-                    try {
-                      handler.sendPacket(packet);
-                    } catch (Exception e) {
-                      logger.warn(
-                          "[SERVER] Auction viewer broadcast failed to user {} for auction {}",
-                          user.getId(),
-                          auctionId,
-                          e);
-                    }
-                  });
-            });
+  private static Object[] appendThrowable(Object[] args, Throwable throwable) {
+    Object[] finalArgs = new Object[args.length + 1];
+    System.arraycopy(args, 0, finalArgs, 0, args.length);
+    finalArgs[args.length] = throwable;
+    return finalArgs;
   }
 
   public static int getOnlineUserCount() {
