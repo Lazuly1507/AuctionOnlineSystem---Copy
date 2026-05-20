@@ -68,8 +68,10 @@ public class PlaceBidCommand extends Command {
       PacketRes packetResponse =
           PacketRes.of(PacketType.PLACE_BID, "Đặt giá thành công.", response);
       clientHandler.sendPacket(packetResponse);
-      Server.broadcast(
-          PacketRes.of(PacketType.BID_PLACED, "Có lượt đặt giá mới.", response), bidderId);
+      Server.broadcastToAuctionViewers(
+          auctionId,
+          PacketRes.of(PacketType.BID_PLACED, "Có lượt đặt giá mới.", response),
+          bidderId);
       sendWalletUpdate(clientHandler, userService.getById(bidderId));
       broadcastAuctionSumList();
       AuctionHistoryResponse historyResponse =
@@ -113,7 +115,8 @@ public class PlaceBidCommand extends Command {
       var auction = auctionService.getAuction(auctionId);
       AuctionDetailResponse response =
           new AuctionDetailResponse(DtoMapper.toAuctionDetail(auction.auction(), auction.item()));
-      Server.broadcast(PacketRes.of(PacketType.AUCTION_DETAIL_UPDATED, "OK", response), -1);
+      Server.broadcastToAuctionViewers(
+          auctionId, PacketRes.of(PacketType.AUCTION_DETAIL_UPDATED, "OK", response), -1);
     } catch (Exception e) {
       logger.error("Failed to broadcast auction detail", e);
     }

@@ -70,6 +70,11 @@ public final class ClientRequestService {
     send(PacketType.FETCH_AUCTION_DETAIL, new AuctionDetailRequest(auctionId, knownVersion));
   }
 
+  /** unwatchAuction. */
+  public void unwatchAuction() throws IOException {
+    send(PacketType.UNWATCH_AUCTION, null);
+  }
+
   /** fetchAuctionResult. */
   public void fetchAuctionResult(int auctionId) throws IOException {
     send(PacketType.FETCH_AUCTION_RESULT, new AuctionResultRequest(auctionId));
