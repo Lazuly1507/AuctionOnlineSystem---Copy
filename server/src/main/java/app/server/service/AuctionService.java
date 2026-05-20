@@ -1,5 +1,6 @@
 package app.server.service;
 
+import app.common.dto.AuctionSummary;
 import app.common.enums.AuctionStatus;
 import app.common.enums.ItemType;
 import app.common.enums.UserRole;
@@ -11,12 +12,9 @@ import app.server.dao.ItemDAO;
 import app.server.dao.UserDAO;
 import app.server.database.TransactionManager;
 import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +25,9 @@ public class AuctionService {
   private final ItemDAO itemDAO;
   private final UserDAO userDAO;
   private final TransactionManager transactionManager;
+  private final AuctionSettlementService settlementService;
+  private final AuctionQueryService queryService;
+  private final AuctionCommandService commandService;
   private final Logger logger = LoggerFactory.getLogger(AuctionService.class);
   private final Clock clock;
 
@@ -41,7 +42,12 @@ public class AuctionService {
     this.itemDAO = itemDAO;
     this.userDAO = userDAO;
     this.transactionManager = transactionManager;
+    this.settlementService = new AuctionSettlementService(bidDAO, userDAO);
+    this.queryService = new AuctionQueryService();
     this.clock = Clock.systemDefaultZone();
+    this.commandService =
+        new AuctionCommandService(
+            auctionDAO, bidDAO, itemDAO, userDAO, transactionManager, settlementService, clock);
   }
 
   public Auction createAndStartAuctionWithItem(
@@ -53,33 +59,16 @@ public class AuctionService {
       int durationMinutes,
       int requesterId,
       UserRole requesterRole) {
-    validateCreateAuctionRequest(
-        name,
-        description,
-        startingPrice,
-        stepPrice,
-        type,
-        durationMinutes,
-        requesterId,
-        requesterRole);
     Auction createdAuction =
-        transactionManager.runInTransaction(
-            conn -> {
-              Item item =
-                  ItemFactory.createItem(
-                      name, requesterId, description, startingPrice, stepPrice, type);
-              Item savedItem = itemDAO.save(conn, item);
-              Auction auction =
-                  new Auction(
-                      savedItem.getId(),
-                      requesterId,
-                      LocalDateTime.now(clock).plusMinutes(durationMinutes),
-                      savedItem.getStartingPrice());
-              Auction created = auctionDAO.save(conn, auction);
-              created.start();
-              auctionDAO.update(conn, created);
-              return created;
-            });
+        commandService.createAndStartAuctionWithItem(
+            name,
+            description,
+            startingPrice,
+            stepPrice,
+            type,
+            durationMinutes,
+            requesterId,
+            requesterRole);
     invalidateCache();
     return createdAuction;
   }
@@ -94,9 +83,16 @@ public class AuctionService {
   }
 
   public List<AuctionSnapshot> getHistoryAuctions(int userId) {
-    return getAuctions().stream()
-        .filter(snapshot -> isSellerOrBidder(snapshot.auction(), userId))
-        .toList();
+    return queryService.filterHistorySnapshots(
+        getAuctions(), snapshot -> isSellerOrBidder(snapshot.auction(), userId));
+  }
+
+  public List<AuctionSummary> getAuctionSummaries() {
+    return queryService.toAuctionSummaries(getAuctions());
+  }
+
+  public List<AuctionSummary> getHistorySummaries(int userId) {
+    return queryService.toAuctionSummaries(getHistoryAuctions(userId));
   }
 
   public AuctionSnapshot getAuction(int auctionId) {
@@ -127,51 +123,12 @@ public class AuctionService {
   }
 
   public void cancelAuction(int auctionId, int requester, int expectedVersion) {
-    transactionManager.runWithoutResult(
-        conn -> {
-          Auction auction = requireAuction(conn, auctionId);
-          ensureCancelPermission(conn, auction, requester);
-          AuctionStatus status = auction.getStatus();
-          if (status == AuctionStatus.FINISHED || status == AuctionStatus.PAID) {
-            throw new ServiceException("Không thể hủy phiên đã kết thúc hoặc đã thanh toán.");
-          }
-          auction.cancel();
-          releaseWallets(conn, auction);
-          boolean ok = auctionDAO.updateIfVersionMatches(conn, auction, expectedVersion);
-          if (!ok) {
-            throw new ServiceException(
-                "Dữ liệu phiên đã thay đổi, vui lòng tải lại trước khi duyệt.");
-          }
-        });
+    commandService.cancelAuction(auctionId, requester, expectedVersion);
     invalidateCache();
   }
 
   public AuctionCompletion completeAuction(int auctionId) {
-    AuctionCompletion completion =
-        transactionManager.runInTransaction(
-            conn -> {
-              Auction auction = requireAuction(conn, auctionId);
-              Optional<Bid> highestBid = bidDAO.findHighestBid(conn, auctionId);
-              if (!auction.isExpired()) {
-                return new AuctionCompletion(auctionId, false, highestBid, Set.of());
-              }
-              AuctionStatus status = auction.getStatus();
-              if (status != AuctionStatus.OPEN && status != AuctionStatus.RUNNING) {
-                return new AuctionCompletion(auctionId, false, highestBid, Set.of());
-              }
-              auction.finish(highestBid.map(Bid::getBidderId).orElse(null));
-              highestBid.ifPresentOrElse(
-                  bid ->
-                      logger.info(
-                          "Phiên {} kết thúc. Winner: {}, Giá: {}",
-                          auctionId,
-                          bid.getBidderName(),
-                          bid.getAmount()),
-                  () -> logger.info("Phiên {} kết thúc. Không có bid.", auctionId));
-              Set<Integer> settledUserIds = settleWallets(conn, auction);
-              auctionDAO.update(conn, auction);
-              return new AuctionCompletion(auctionId, true, highestBid, settledUserIds);
-            });
+    AuctionCompletion completion = commandService.completeAuction(auctionId);
     if (completion.completed()) {
       invalidateCache();
     }
@@ -198,92 +155,6 @@ public class AuctionService {
       }
     }
     return completions;
-  }
-
-  private Auction requireAuction(java.sql.Connection conn, int auctionId) {
-    auctionDAO.lockRow(conn, auctionId);
-    return auctionDAO
-        .findById(conn, auctionId)
-        .orElseThrow(() -> new ServiceException("Không tìm thấy phiên: " + auctionId));
-  }
-
-  private Set<Integer> settleWallets(java.sql.Connection conn, Auction auction) {
-    List<Bid> bids = bidDAO.findByAuction(conn, auction.getId());
-    Set<Integer> bidderIds = new LinkedHashSet<>();
-    for (Bid bid : bids) {
-      bidderIds.add(bid.getBidderId());
-    }
-    for (Integer bidderId : bidderIds) {
-      userDAO.lockRow(conn, bidderId);
-      User user =
-          userDAO
-              .findById(conn, bidderId)
-              .orElseThrow(() -> new ServiceException("Không tìm thấy user với id: " + bidderId));
-      if (auction.getWinnerId() != null && auction.getWinnerId() == bidderId) {
-        user.getWallet().commitFrozen(String.valueOf(auction.getId()));
-      } else {
-        user.getWallet().releaseFrozen(String.valueOf(auction.getId()));
-      }
-      userDAO.update(conn, user);
-    }
-    return bidderIds;
-  }
-
-  private void releaseWallets(java.sql.Connection conn, Auction auction) {
-    List<Bid> bids = bidDAO.findByAuction(conn, auction.getId());
-    Set<Integer> bidderIds = new LinkedHashSet<>();
-    for (Bid bid : bids) {
-      bidderIds.add(bid.getBidderId());
-    }
-    for (Integer bidderId : bidderIds) {
-      userDAO.lockRow(conn, bidderId);
-      User user =
-          userDAO
-              .findById(conn, bidderId)
-              .orElseThrow(() -> new ServiceException("Không tìm thấy user với id: " + bidderId));
-      user.getWallet().releaseFrozen(String.valueOf(auction.getId()));
-      userDAO.update(conn, user);
-    }
-  }
-
-  private void ensureCancelPermission(java.sql.Connection conn, Auction auction, int requesterId) {
-    if (requesterId == auction.getSellerId()) {
-      return;
-    }
-    User user =
-        userDAO
-            .findById(conn, requesterId)
-            .orElseThrow(() -> new ServiceException("Không tìm thấy user với id: " + requesterId));
-    if (user.getRole() != UserRole.ADMIN) {
-      throw new ServiceException("Bạn không có quyền hủy phiên đấu giá này.");
-    }
-  }
-
-  private void validateCreateAuctionRequest(
-      String name,
-      String description,
-      long startingPrice,
-      long stepPrice,
-      ItemType type,
-      int durationMinutes,
-      int requesterId,
-      UserRole requesterRole) {
-    if (requesterId <= 0 || requesterRole == null) {
-      throw new ServiceException("Dữ liệu người tạo phiên không hợp lệ.");
-    }
-    if (requesterRole != UserRole.SELLER && requesterRole != UserRole.ADMIN) {
-      throw new ServiceException("Chỉ Seller/Admin được tạo phiên.");
-    }
-    if (name == null
-        || name.isBlank()
-        || description == null
-        || description.isBlank()
-        || startingPrice <= 0
-        || stepPrice <= 0
-        || durationMinutes <= 0
-        || type == null) {
-      throw new ServiceException("Dữ liệu phiên đấu giá không hợp lệ.");
-    }
   }
 
   public void invalidateCache() {

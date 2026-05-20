@@ -7,8 +7,10 @@ import app.common.mapper.DtoMapper;
 import app.common.models.Auction;
 import app.common.models.Item;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /** Stores full Auction models only. */
@@ -64,10 +66,10 @@ public final class AuctionStore {
 
   /** setHistorySummaries. */
   public void setHistorySummaries(List<AuctionSummary> summaries) {
-    List<Integer> nextIds = new ArrayList<>();
+    Set<Integer> nextIds = new LinkedHashSet<>();
     if (summaries == null) {
       synchronized (historyLock) {
-        historyAuctionIds = nextIds;
+        historyAuctionIds = new ArrayList<>(nextIds);
       }
       return;
     }
@@ -75,11 +77,14 @@ public final class AuctionStore {
       if (summary == null) {
         continue;
       }
+      if (summary.auctionId() <= 0) {
+        continue;
+      }
       nextIds.add(summary.auctionId());
       addAuction(DtoMapper.toAuction(summary));
     }
     synchronized (historyLock) {
-      historyAuctionIds = nextIds;
+      historyAuctionIds = new ArrayList<>(nextIds);
     }
   }
 
@@ -100,6 +105,35 @@ public final class AuctionStore {
       summaries.add(DtoMapper.toAuctionSummary(auction, item));
     }
     return summaries;
+  }
+
+  /** appendHistorySummaries. */
+  public void appendHistorySummaries(List<AuctionSummary> summaries) {
+    if (summaries == null || summaries.isEmpty()) {
+      return;
+    }
+    synchronized (historyLock) {
+      Set<Integer> merged = new LinkedHashSet<>(historyAuctionIds);
+      for (AuctionSummary summary : summaries) {
+        if (summary == null || summary.auctionId() <= 0) {
+          continue;
+        }
+        merged.add(summary.auctionId());
+        addAuction(DtoMapper.toAuction(summary));
+      }
+      historyAuctionIds = new ArrayList<>(merged);
+    }
+  }
+
+  /** getMaxHistoryVersion. */
+  public int getMaxHistoryVersion() {
+    int maxVersion = -1;
+    for (AuctionSummary summary : getHistorySummaries()) {
+      if (summary != null && summary.version() > maxVersion) {
+        maxVersion = summary.version();
+      }
+    }
+    return maxVersion;
   }
 
   /** clearHistory. */
@@ -155,6 +189,9 @@ public final class AuctionStore {
   }
 
   private Auction mergeAuction(Auction existing, Auction incoming) {
+    if (incoming.getVersion() < existing.getVersion()) {
+      return existing;
+    }
     boolean incomingHasDetail = incoming.getItemId() > 0 || incoming.getSellerId() > 0;
     boolean incomingHasFullState =
         incomingHasDetail || incoming.getCreatedAt() != null || incoming.getUpdatedAt() != null;
@@ -169,7 +206,7 @@ public final class AuctionStore {
             incoming.getEndTime() != null ? incoming.getEndTime() : existing.getEndTime(),
             incomingHasFullState ? incoming.getHighestBid() : existing.getHighestBid(),
             incomingHasDetail ? incoming.getExtendedCount() : existing.getExtendedCount(),
-            Math.max(existing.getVersion(), incoming.getVersion()),
+            incoming.getVersion(),
             incoming.getCreatedAt() != null ? incoming.getCreatedAt() : existing.getCreatedAt(),
             incoming.getUpdatedAt() != null ? incoming.getUpdatedAt() : existing.getUpdatedAt());
     merged.setItemName(

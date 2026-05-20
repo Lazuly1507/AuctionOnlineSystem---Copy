@@ -74,13 +74,6 @@ public class PlaceBidCommand extends Command {
           bidderId);
       sendWalletUpdate(clientHandler, userService.getById(bidderId));
       broadcastAuctionSumList();
-      AuctionHistoryResponse historyResponse =
-          new AuctionHistoryResponse(
-              auctionService.getHistoryAuctions(clientHandler.getUser().getId()).stream()
-                  .map(snapshot -> DtoMapper.toAuctionSummary(snapshot.auction(), snapshot.item()))
-                  .toList());
-      clientHandler.sendPacket(
-          PacketRes.of(PacketType.FETCH_AUCTION_HISTORY, "OK", historyResponse));
       broadcastAuctionDetail(auctionId);
       logger.info("User {} placed bid {} in auction {}", bidderId, bidAmount, auctionId);
     } catch (ServiceException e) {
@@ -100,10 +93,7 @@ public class PlaceBidCommand extends Command {
   private void broadcastAuctionSumList() {
     try {
       AuctionSummariesResponse response =
-          new AuctionSummariesResponse(
-              auctionService.getAuctions().stream()
-                  .map(snapshot -> DtoMapper.toAuctionSummary(snapshot.auction(), snapshot.item()))
-                  .toList());
+          new AuctionSummariesResponse(auctionService.getAuctionSummaries());
       Server.broadcast(PacketRes.of(PacketType.AUCTION_SUMMARIES_UPDATED, "OK", response), -1);
     } catch (Exception e) {
       logger.error("Failed to broadcast auction list", e);

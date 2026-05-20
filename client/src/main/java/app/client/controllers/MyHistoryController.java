@@ -23,6 +23,7 @@ import javafx.scene.layout.VBox;
 public class MyHistoryController implements Cleanable {
   private static final double CARD_WIDTH = 260;
   private static final double CARD_HEIGHT = 320;
+  private static final long HISTORY_CACHE_TTL_MS = 45_000;
   @FXML private FlowPane runningPane;
   @FXML private ComboBox<String> typeFilterComboBox;
   @FXML private FlowPane finishedPane;
@@ -32,6 +33,9 @@ public class MyHistoryController implements Cleanable {
   private boolean reloadLoading;
   private Button reloadButton;
   private Runnable stopReloadLoading = () -> {};
+  private long lastHistoryFetchAtMs;
+  private int historyOwnerUserId = -1;
+  private boolean historyLoaded;
   private final Runnable summariesListener =
       () ->
           Platform.runLater(
@@ -49,19 +53,33 @@ public class MyHistoryController implements Cleanable {
     typeFilterComboBox.setOnAction(e -> rebuildUi());
     notifications.addUpdateListener(summariesListener);
     loadCachedHistory();
-    requestHistory();
     rebuildUi();
+    requestHistoryIfStale(false);
   }
 
-  private void requestHistory() {
-    if (UserManager.getInstance().getCurrentUser() == null) {
+  private void requestHistoryIfStale(boolean force) {
+    var currentUser = UserManager.getInstance().getCurrentUser();
+    if (currentUser == null) {
       AuctionStore.getInstance().clearHistory();
       loadCachedHistory();
       rebuildUi();
+      historyOwnerUserId = -1;
+      lastHistoryFetchAtMs = 0;
+      historyLoaded = false;
+      return;
+    }
+    int userId = currentUser.getId();
+    long now = System.currentTimeMillis();
+    boolean sameOwner = historyOwnerUserId == userId;
+    boolean expired = now - lastHistoryFetchAtMs >= HISTORY_CACHE_TTL_MS;
+    if (!force && sameOwner && historyLoaded && !expired) {
       return;
     }
     try {
-      requests.fetchAuctionHistory();
+      requests.fetchAuctionHistory(AuctionStore.getInstance().getMaxHistoryVersion());
+      historyOwnerUserId = userId;
+      lastHistoryFetchAtMs = now;
+      historyLoaded = true;
     } catch (Exception e) {
       setReloadLoading(false);
       AlertUtils.showError("Lỗi", e.getMessage());
@@ -71,6 +89,32 @@ public class MyHistoryController implements Cleanable {
   private void loadCachedHistory() {
     summaries.clear();
     summaries.addAll(AuctionStore.getInstance().getHistorySummaries());
+    summaries.sort(
+        (left, right) -> {
+          if (left == null && right == null) {
+            return 0;
+          }
+          if (left == null) {
+            return 1;
+          }
+          if (right == null) {
+            return -1;
+          }
+          if (left.endTime() == null && right.endTime() == null) {
+            return Integer.compare(right.auctionId(), left.auctionId());
+          }
+          if (left.endTime() == null) {
+            return 1;
+          }
+          if (right.endTime() == null) {
+            return -1;
+          }
+          int timeOrder = right.endTime().compareTo(left.endTime());
+          if (timeOrder != 0) {
+            return timeOrder;
+          }
+          return Integer.compare(right.auctionId(), left.auctionId());
+        });
   }
 
   private void rebuildUi() {
@@ -80,6 +124,9 @@ public class MyHistoryController implements Cleanable {
     runningPane.getChildren().clear();
     finishedPane.getChildren().clear();
     for (AuctionSummary summary : summaries) {
+      if (summary == null) {
+        continue;
+      }
       VBox card = createAuctionCard(summary);
       if (summary.status() == AuctionStatus.RUNNING) {
         runningPane.getChildren().add(card);
@@ -107,13 +154,15 @@ public class MyHistoryController implements Cleanable {
     Label imgLabel = new Label("Ảnh tài sản");
     imgLabel.setStyle("-fx-text-fill: #aaa;");
     imagePane.getChildren().add(imgLabel);
-    Label titleLabel = new Label(summary.itemName());
+    Label titleLabel =
+        new Label(summary.itemName() == null ? "(Không có tên tài sản)" : summary.itemName());
     titleLabel.setWrapText(true);
     titleLabel.setStyle(
         "-fx-font-weight: bold;" + "-fx-font-size: 14px;" + "-fx-text-fill: white;");
     Label priceLabel = new Label("Giá hiện tại: " + summary.currentPrice() + " đ");
     priceLabel.setStyle("-fx-text-fill: #e91e63;" + "-fx-font-weight: bold;");
-    Label timeLabel = new Label("Kết thúc: " + summary.endTime());
+    Label timeLabel =
+        new Label("Kết thúc: " + (summary.endTime() == null ? "--" : summary.endTime()));
     timeLabel.setStyle("-fx-text-fill: #9aa0b4;" + "-fx-font-size: 12px;");
     Button btnDetail =
         new Button(summary.status() == AuctionStatus.FINISHED ? "Xem kết quả" : "Chi tiết");
@@ -136,7 +185,7 @@ public class MyHistoryController implements Cleanable {
     try {
       reloadButton = LoadingButton.fromEvent(event);
       setReloadLoading(true);
-      requests.fetchAuctionHistory();
+      requestHistoryIfStale(true);
     } catch (Exception e) {
       setReloadLoading(false);
       AlertUtils.showError("Lỗi", e.getMessage());

@@ -46,7 +46,14 @@
             <artifactId>logback-classic</artifactId>
             <scope>runtime</scope>
         </dependency>
-    </dependencies>
+    
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+</dependencies>
 
     <build>
         <plugins>
