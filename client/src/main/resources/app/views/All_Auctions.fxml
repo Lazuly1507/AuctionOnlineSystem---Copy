@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
@@ -64,6 +65,10 @@
                                 fx:id="typeFilterComboBox"
                                 prefWidth="180"
                                 promptText="Chọn loại item" />
+                        <TextField
+                                fx:id="searchField"
+                                prefWidth="280"
+                                promptText="Tìm theo tên phiên đấu giá..." />
                     </HBox>
 
                     <!-- ================= RUNNING ================= -->
@@ -99,4 +104,3 @@
     </center>
 
 </BorderPane>
-
