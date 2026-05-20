@@ -57,57 +57,45 @@ public final class AuctionNavigator {
   }
 
   private void requestAndOpen(int auctionId) {
-    PendingOpen pending = new PendingOpen(auctionId);
-    pending.register();
+    @SuppressWarnings("unchecked")
+    Runnable[] updateRef = new Runnable[1];
+    @SuppressWarnings("unchecked")
+    Consumer<String>[] messageRef = new Consumer[1];
+    updateRef[0] =
+        () ->
+            Platform.runLater(
+                () -> {
+                  AuctionDetail detail = AuctionStore.getInstance().getAuctionDetail(auctionId);
+                  if (detail == null) {
+                    return;
+                  }
+                  notifications.removeUpdateListener(updateRef[0]);
+                  notifications.removeMessageListener(messageRef[0]);
+                  LiveAuctionSessionStore.getInstance().setSelectedDetail(detail);
+                  notifications.notifyUpdate();
+                });
+    messageRef[0] =
+        message ->
+            Platform.runLater(
+                () -> {
+                  if (message == null || message.isBlank()) {
+                    return;
+                  }
+                  AuctionDetail detail = AuctionStore.getInstance().getAuctionDetail(auctionId);
+                  if (detail != null) {
+                    return;
+                  }
+                  notifications.removeUpdateListener(updateRef[0]);
+                  notifications.removeMessageListener(messageRef[0]);
+                  AlertUtils.showError("Lỗi", message);
+                });
+    notifications.addUpdateListener(updateRef[0]);
+    notifications.addMessageListener(messageRef[0]);
     try {
       requests.fetchAuctionDetail(auctionId, -1);
     } catch (IOException e) {
       pending.unregister();
       AlertUtils.showError("Lỗi Kết nối", "Server không phản hồi");
-    }
-  }
-
-  private final class PendingOpen {
-    private final int auctionId;
-    private final Runnable updateListener;
-    private final java.util.function.Consumer<String> messageListener;
-
-    private PendingOpen(int auctionId) {
-      this.auctionId = auctionId;
-      this.updateListener = () -> Platform.runLater(this::onUpdate);
-      this.messageListener = message -> Platform.runLater(() -> onMessage(message));
-    }
-
-    private void register() {
-      notifications.addUpdateListener(updateListener);
-      notifications.addMessageListener(messageListener);
-    }
-
-    private void unregister() {
-      notifications.removeUpdateListener(updateListener);
-      notifications.removeMessageListener(messageListener);
-    }
-
-    private void onUpdate() {
-      AuctionDetail detail = AuctionStore.getInstance().getAuctionDetail(auctionId);
-      if (detail == null) {
-        return;
-      }
-      unregister();
-      LiveAuctionSessionStore.getInstance().setSelectedDetail(detail);
-      notifications.notifyUpdate();
-    }
-
-    private void onMessage(String message) {
-      if (message == null || message.isBlank()) {
-        return;
-      }
-      AuctionDetail detail = AuctionStore.getInstance().getAuctionDetail(auctionId);
-      if (detail != null) {
-        return;
-      }
-      unregister();
-      AlertUtils.showError("Lỗi", message);
     }
   }
 
