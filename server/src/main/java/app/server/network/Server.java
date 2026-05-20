@@ -265,6 +265,41 @@ public class Server {
         });
   }
 
+  /** broadcastToAuctionViewers. */
+  public static void broadcastToAuctionViewers(int auctionId, PacketRes packet, int excludeUser) {
+    if (packet == null || auctionId <= 0) {
+      return;
+    }
+    authenticatedClients
+        .values()
+        .forEach(
+            handler -> {
+              if (handler == null || !handler.isAuthenticated()) {
+                return;
+              }
+              var user = handler.getUser();
+              if (user == null || user.getId() == excludeUser) {
+                return;
+              }
+              Integer viewingAuctionId = handler.getSession().getViewingAuctionId();
+              if (viewingAuctionId == null || viewingAuctionId != auctionId) {
+                return;
+              }
+              broadcastPool.execute(
+                  () -> {
+                    try {
+                      handler.sendPacket(packet);
+                    } catch (Exception e) {
+                      logger.warn(
+                          "[SERVER] Auction viewer broadcast failed to user {} for auction {}",
+                          user.getId(),
+                          auctionId,
+                          e);
+                    }
+                  });
+            });
+  }
+
   public static int getOnlineUserCount() {
     return authenticatedClients.size();
   }

@@ -1,6 +1,5 @@
 package app.client.manager;
 
-import app.client.controllers.LiveController;
 import app.client.store.AuctionStore;
 import app.client.utils.AlertUtils;
 import app.common.dto.AuctionDetail;
@@ -38,9 +37,12 @@ public final class AuctionNavigator {
       return;
     }
     AuctionStore.getInstance().addAuction(DtoMapper.toAuction(summary));
+    LiveAuctionSessionStore.getInstance().selectAuction(summary.auctionId());
+    navigateToLive();
     AuctionDetail detail = AuctionStore.getInstance().getAuctionDetail(summary.auctionId());
     if (detail != null) {
-      navigateToLive(detail);
+      LiveAuctionSessionStore.getInstance().setSelectedDetail(detail);
+      notifications.notifyUpdate();
       return;
     }
     if (!requests.isConnected()) {
@@ -70,7 +72,8 @@ public final class AuctionNavigator {
                   }
                   notifications.removeUpdateListener(updateRef[0]);
                   notifications.removeMessageListener(messageRef[0]);
-                  navigateToLive(detail);
+                  LiveAuctionSessionStore.getInstance().setSelectedDetail(detail);
+                  notifications.notifyUpdate();
                 });
     messageRef[0] =
         message ->
@@ -98,14 +101,7 @@ public final class AuctionNavigator {
     }
   }
 
-  private void navigateToLive(AuctionDetail detail) {
-    NavigationManager.getInstance()
-        .navigateTo(
-            View.LIVE,
-            controller -> {
-              if (controller instanceof LiveController liveController) {
-                liveController.setAuction(detail);
-              }
-            });
+  private void navigateToLive() {
+    NavigationManager.getInstance().navigateTo(View.LIVE);
   }
 }

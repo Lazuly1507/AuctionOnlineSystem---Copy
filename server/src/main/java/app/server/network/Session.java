@@ -11,6 +11,7 @@ public class Session {
   private final LocalDateTime createdAt;
   private volatile LocalDateTime lastAccessTime;
   private volatile boolean authenticated;
+  private volatile Integer viewingAuctionId;
 
   /** Session. */
   public Session() {
@@ -18,6 +19,7 @@ public class Session {
     this.createdAt = LocalDateTime.now();
     this.lastAccessTime = createdAt;
     this.authenticated = false;
+    this.viewingAuctionId = null;
   }
 
   /** authenticate. */
@@ -31,6 +33,7 @@ public class Session {
   public void logout() {
     this.user = null;
     this.authenticated = false;
+    this.viewingAuctionId = null;
     touch();
   }
 
@@ -57,5 +60,14 @@ public class Session {
 
   public LocalDateTime getLastAccessTime() {
     return lastAccessTime;
+  }
+
+  public Integer getViewingAuctionId() {
+    return viewingAuctionId;
+  }
+
+  public void setViewingAuctionId(Integer viewingAuctionId) {
+    this.viewingAuctionId = viewingAuctionId;
+    touch();
   }
 }
